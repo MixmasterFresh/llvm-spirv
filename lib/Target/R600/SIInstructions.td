@@ -1510,20 +1510,26 @@ defm V_READLANE_B32 : VOP2SI_3VI_m <
   vop3 <0x001, 0x289>,
   "v_readlane_b32",
   (outs SReg_32:$vdst),
-  (ins VGPR_32:$src0, SCSrc_32:$src1),
-  "v_readlane_b32 $vdst, $src0, $src1"
+  (ins VGPR_32:$src0, SSrc_32:$vsrc1),
+  "v_readlane_b32 $vdst, $src0, $vsrc1"
 >;
 
 defm V_WRITELANE_B32 : VOP2SI_3VI_m <
   vop3 <0x002, 0x28a>,
   "v_writelane_b32",
   (outs VGPR_32:$vdst),
-  (ins SReg_32:$src0, SCSrc_32:$src1),
-  "v_writelane_b32 $vdst, $src0, $src1"
+  (ins SReg_32:$src0, SSrc_32:$vsrc1),
+  "v_writelane_b32 $vdst, $src0, $vsrc1"
 >;
 
 // These instructions only exist on SI and CI
 let SubtargetPredicate = isSICI in {
+
+let isCommutable = 1 in {
+defm V_MAC_LEGACY_F32 : VOP2Inst <vop2<0x6>, "v_mac_legacy_f32",
+  VOP_F32_F32_F32
+>;
+} // End isCommutable = 1
 
 defm V_MIN_LEGACY_F32 : VOP2InstSI <vop2<0xd>, "v_min_legacy_f32",
   VOP_F32_F32_F32, AMDGPUfmin_legacy

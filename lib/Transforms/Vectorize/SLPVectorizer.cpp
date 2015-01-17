@@ -2907,7 +2907,7 @@ struct SLPVectorizer : public FunctionPass {
     auto *TLIP = getAnalysisIfAvailable<TargetLibraryInfoWrapperPass>();
     TLI = TLIP ? &TLIP->getTLI() : nullptr;
     AA = &getAnalysis<AliasAnalysis>();
-    LI = &getAnalysis<LoopInfo>();
+    LI = &getAnalysis<LoopInfoWrapperPass>().getLoopInfo();
     DT = &getAnalysis<DominatorTreeWrapperPass>().getDomTree();
     AC = &getAnalysis<AssumptionCacheTracker>().getAssumptionCache(F);
 
@@ -2966,9 +2966,9 @@ struct SLPVectorizer : public FunctionPass {
     AU.addRequired<ScalarEvolution>();
     AU.addRequired<AliasAnalysis>();
     AU.addRequired<TargetTransformInfo>();
-    AU.addRequired<LoopInfo>();
+    AU.addRequired<LoopInfoWrapperPass>();
     AU.addRequired<DominatorTreeWrapperPass>();
-    AU.addPreserved<LoopInfo>();
+    AU.addPreserved<LoopInfoWrapperPass>();
     AU.addPreserved<DominatorTreeWrapperPass>();
     AU.setPreservesCFG();
   }

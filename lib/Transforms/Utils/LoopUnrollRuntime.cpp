@@ -23,6 +23,7 @@
 
 #include "llvm/Transforms/Utils/UnrollLoop.h"
 #include "llvm/ADT/Statistic.h"
+#include "llvm/Analysis/AliasAnalysis.h"
 #include "llvm/Analysis/LoopIterator.h"
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/Analysis/ScalarEvolution.h"
@@ -32,6 +33,7 @@
 #include "llvm/IR/Metadata.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 #include <algorithm>
@@ -59,7 +61,8 @@ STATISTIC(NumRuntimeUnrolled,
 static void ConnectProlog(Loop *L, Value *BECount, unsigned Count,
                           BasicBlock *LastPrologBB, BasicBlock *PrologEnd,
                           BasicBlock *OrigPH, BasicBlock *NewPH,
-                          ValueToValueMapTy &VMap, Pass *P) {
+                          ValueToValueMapTy &VMap, AliasAnalysis *AA,
+                          DominatorTree *DT, LoopInfo *LI, Pass *P) {
   BasicBlock *Latch = L->getLoopLatch();
   assert(Latch && "Loop must have a latch");
 
@@ -124,7 +127,8 @@ static void ConnectProlog(Loop *L, Value *BECount, unsigned Count,
   // Split the exit to maintain loop canonicalization guarantees
   SmallVector<BasicBlock*, 4> Preds(pred_begin(Exit), pred_end(Exit));
   if (!Exit->isLandingPad()) {
-    SplitBlockPredecessors(Exit, Preds, ".unr-lcssa", P);
+    SplitBlockPredecessors(Exit, Preds, ".unr-lcssa", AA, DT, LI,
+                           P->mustPreserveAnalysisID(LCSSAID));
   } else {
     SmallVector<BasicBlock*, 2> NewBBs;
     SplitLandingPadPredecessors(Exit, Preds, ".unr1-lcssa", ".unr2-lcssa",
@@ -329,7 +333,8 @@ bool llvm::UnrollRuntimeLoopProlog(Loop *L, unsigned Count, LoopInfo *LI,
   if (Loop *ParentLoop = L->getParentLoop())
     SE->forgetLoop(ParentLoop);
 
-  // Grab the dominator tree so we can preserve it.
+  // Grab analyses that we preserve.
+  auto *AA = LPM->getAnalysisIfAvailable<AliasAnalysis>();
   auto *DTWP = LPM->getAnalysisIfAvailable<DominatorTreeWrapperPass>();
   auto *DT = DTWP ? &DTWP->getDomTree() : nullptr;
 
@@ -412,8 +417,8 @@ bool llvm::UnrollRuntimeLoopProlog(Loop *L, unsigned Count, LoopInfo *LI,
   // Connect the prolog code to the original loop and update the
   // PHI functions.
   BasicBlock *LastLoopBB = cast<BasicBlock>(VMap[Latch]);
-  ConnectProlog(L, BECount, Count, LastLoopBB, PEnd, PH, NewPH, VMap,
-                LPM->getAsPass());
+  ConnectProlog(L, TripCount, Count, LastLoopBB, PEnd, PH, NewPH, VMap,
+                AA, DT, LI, LPM->getAsPass());
   NumRuntimeUnrolled++;
   return true;
 }

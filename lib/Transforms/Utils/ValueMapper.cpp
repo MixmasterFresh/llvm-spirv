@@ -193,11 +193,11 @@ static TempMDLocation cloneMDLocation(const MDLocation *Node) {
                                   Node->getInlinedAt());
 }
 
-static TempUniquableMDNode cloneMDNode(const UniquableMDNode *Node) {
+static TempMDNode cloneMDNode(const MDNode *Node) {
   switch (Node->getMetadataID()) {
   default:
-    llvm_unreachable("Invalid UniquableMDNode subclass");
-#define HANDLE_UNIQUABLE_LEAF(CLASS)                                           \
+    llvm_unreachable("Invalid MDNode subclass");
+#define HANDLE_MDNODE_LEAF(CLASS)                                              \
   case Metadata::CLASS##Kind:                                                  \
     return clone##CLASS(cast<CLASS>(Node));
 #include "llvm/IR/Metadata.def"
@@ -210,9 +210,8 @@ static TempUniquableMDNode cloneMDNode(const UniquableMDNode *Node) {
 /// Assumes that \c NewNode is already a clone of \c OldNode.
 ///
 /// \pre \c NewNode is a clone of \c OldNode.
-static bool remap(const UniquableMDNode *OldNode, UniquableMDNode *NewNode,
-                  ValueToValueMapTy &VM, RemapFlags Flags,
-                  ValueMapTypeRemapper *TypeMapper,
+static bool remap(const MDNode *OldNode, MDNode *NewNode, ValueToValueMapTy &VM,
+                  RemapFlags Flags, ValueMapTypeRemapper *TypeMapper,
                   ValueMaterializer *Materializer) {
   assert(OldNode->getNumOperands() == NewNode->getNumOperands() &&
          "Expected nodes to match");
@@ -241,14 +240,13 @@ static bool remap(const UniquableMDNode *OldNode, UniquableMDNode *NewNode,
 /// \brief Map a distinct MDNode.
 ///
 /// Distinct nodes are not uniqued, so they must always recreated.
-static Metadata *mapDistinctNode(const UniquableMDNode *Node,
-                                 SmallVectorImpl<UniquableMDNode *> &Cycles,
-                                 ValueToValueMapTy &VM, RemapFlags Flags,
+static Metadata *mapDistinctNode(const MDNode *Node, ValueToValueMapTy &VM,
+                                 RemapFlags Flags,
                                  ValueMapTypeRemapper *TypeMapper,
                                  ValueMaterializer *Materializer) {
   assert(Node->isDistinct() && "Expected distinct node");
 
-  UniquableMDNode *NewMD = MDNode::replaceWithDistinct(cloneMDNode(Node));
+  MDNode *NewMD = MDNode::replaceWithDistinct(cloneMDNode(Node));
   remap(Node, NewMD, VM, Flags, TypeMapper, Materializer);
   return NewMD;
 }
@@ -256,8 +254,8 @@ static Metadata *mapDistinctNode(const UniquableMDNode *Node,
 /// \brief Map a uniqued MDNode.
 ///
 /// Uniqued nodes may not need to be recreated (they may map to themselves).
-static Metadata *mapUniquedNode(const UniquableMDNode *Node,
-                                ValueToValueMapTy &VM, RemapFlags Flags,
+static Metadata *mapUniquedNode(const MDNode *Node, ValueToValueMapTy &VM,
+                                RemapFlags Flags,
                                 ValueMapTypeRemapper *TypeMapper,
                                 ValueMaterializer *Materializer) {
   assert(Node->isUniqued() && "Expected uniqued node");
@@ -307,7 +305,7 @@ static Metadata *MapMetadataImpl(const Metadata *MD,
     return nullptr;
   }
 
-  const UniquableMDNode *Node = cast<UniquableMDNode>(MD);
+  const MDNode *Node = cast<MDNode>(MD);
   assert(Node->isResolved() && "Unexpected unresolved node");
 
   // If this is a module-level metadata and we know that nothing at the
@@ -324,22 +322,11 @@ static Metadata *MapMetadataImpl(const Metadata *MD,
 Metadata *llvm::MapMetadata(const Metadata *MD, ValueToValueMapTy &VM,
                             RemapFlags Flags, ValueMapTypeRemapper *TypeMapper,
                             ValueMaterializer *Materializer) {
-  SmallVector<UniquableMDNode *, 8> Cycles;
-  Metadata *NewMD =
-      MapMetadataImpl(MD, Cycles, VM, Flags, TypeMapper, Materializer);
-
-  // Resolve cycles underneath MD.
-  if (NewMD && NewMD != MD) {
-    if (auto *N = dyn_cast<UniquableMDNode>(NewMD))
-      N->resolveCycles();
-
-    for (UniquableMDNode *N : Cycles)
-      N->resolveCycles();
-  } else {
-    // Shouldn't get unresolved cycles if nothing was remapped.
-    assert(Cycles.empty() && "Expected no unresolved cycles");
-  }
-
+  Metadata *NewMD = MapMetadataImpl(MD, VM, Flags, TypeMapper, Materializer);
+  if (NewMD && NewMD != MD)
+    if (auto *N = dyn_cast<MDNode>(NewMD))
+      if (!N->isResolved())
+        N->resolveCycles();
   return NewMD;
 }
 

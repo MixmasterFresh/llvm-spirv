@@ -75,17 +75,9 @@ static const unsigned MinVecRegSize = 128;
 
 static const unsigned RecursionMaxDepth = 12;
 
-/// \brief Predicate for the element types that the SLP vectorizer supports.
-///
-/// The most important thing to filter here are types which are invalid in LLVM
-/// vectors. We also filter target specific types which have absolutely no
-/// meaningful vectorization path such as x86_fp80 and ppc_f128. This just
-/// avoids spending time checking the cost model and realizing that they will
-/// be inevitably scalarized.
-static bool isValidElementType(Type *Ty) {
-  return VectorType::isValidElementType(Ty) && !Ty->isX86_FP80Ty() &&
-         !Ty->isPPC_FP128Ty();
-}
+// Limit the number of alias checks. The limit is chosen so that
+// it has no negative effect on the llvm benchmarks.
+static const unsigned AliasedCheckLimit = 10;
 
 /// \returns the parent basic block if all of the instructions in \p VL
 /// are in the same block or null otherwise.
@@ -2768,11 +2760,22 @@ void BoUpSLP::BlockScheduling::calculateDependencies(ScheduleData *SD,
           Instruction *SrcInst = BundleMember->Inst;
           AliasAnalysis::Location SrcLoc = getLocation(SrcInst, SLP->AA);
           bool SrcMayWrite = BundleMember->Inst->mayWriteToMemory();
+          unsigned numAliased = 0;
 
           while (DepDest) {
             assert(isInSchedulingRegion(DepDest));
             if (SrcMayWrite || DepDest->Inst->mayWriteToMemory()) {
-              if (SLP->isAliased(SrcLoc, SrcInst, DepDest->Inst)) {
+
+              // Limit the number of alias checks, becaus SLP->isAliased() is
+              // the expensive part in the following loop.
+              if (numAliased >= AliasedCheckLimit
+                  || SLP->isAliased(SrcLoc, SrcInst, DepDest->Inst)) {
+
+                // We increment the counter only if the locations are aliased
+                // (instead of counting all alias checks). This gives a better
+                // balance between reduced runtime accurate dependencies.
+                numAliased++;
+
                 DepDest->MemoryDependencies.push_back(BundleMember);
                 BundleMember->Dependencies++;
                 ScheduleData *DestBundle = DepDest->FirstInBundle;

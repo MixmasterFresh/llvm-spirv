@@ -160,9 +160,8 @@ static Metadata *MapMetadataImpl(const Metadata *MD,
                                  ValueMapTypeRemapper *TypeMapper,
                                  ValueMaterializer *Materializer);
 
-static Metadata *mapMetadataOp(Metadata *Op,
-                               SmallVectorImpl<UniquableMDNode *> &Cycles,
-                               ValueToValueMapTy &VM, RemapFlags Flags,
+static Metadata *mapMetadataOp(Metadata *Op, ValueToValueMapTy &VM,
+                               RemapFlags Flags,
                                ValueMapTypeRemapper *TypeMapper,
                                ValueMaterializer *Materializer) {
   if (!Op)

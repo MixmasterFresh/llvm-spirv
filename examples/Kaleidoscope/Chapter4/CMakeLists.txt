@@ -3,8 +3,6 @@ set(LLVM_LINK_COMPONENTS
   Core
   ExecutionEngine
   InstCombine
-  MC
-  RuntimeDyld
   ScalarOpts
   Support
   TransformUtils

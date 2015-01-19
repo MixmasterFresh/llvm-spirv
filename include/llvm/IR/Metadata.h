@@ -960,7 +960,6 @@ public:
 
 private:
   MDTuple *uniquifyImpl();
-  void eraseFromStoreImpl();
 };
 
 MDTuple *MDNode::get(LLVMContext &Context, ArrayRef<Metadata *> MDs) {
@@ -1038,7 +1037,6 @@ public:
 
 private:
   MDLocation *uniquifyImpl();
-  void eraseFromStoreImpl();
 };
 
 //===----------------------------------------------------------------------===//

@@ -821,6 +821,8 @@ protected:
   ~UniquableMDNode() {}
 
   void storeDistinctInContext();
+  template <class T, class StoreT>
+  static T *storeImpl(T *N, StorageType Storage, StoreT &Store);
 
 public:
   static bool classof(const Metadata *MD) {

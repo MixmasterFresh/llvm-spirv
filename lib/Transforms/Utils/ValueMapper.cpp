@@ -303,11 +303,10 @@ static bool shouldRemapUniquedNode(const UniquableMDNode *Node,
 ///
 /// Uniqued nodes may not need to be recreated (they may map to themselves).
 static Metadata *mapUniquedNode(const UniquableMDNode *Node,
-                                SmallVectorImpl<UniquableMDNode *> &Cycles,
-                                ValueToValueMapTy &VM, RemapFlags Flags,
-                                ValueMapTypeRemapper *TypeMapper,
-                                ValueMaterializer *Materializer) {
-  assert(!Node->isDistinct() && "Expected uniqued node");
+                                 ValueToValueMapTy &VM, RemapFlags Flags,
+                                 ValueMapTypeRemapper *TypeMapper,
+                                 ValueMaterializer *Materializer) {
+  assert(Node->isUniqued() && "Expected uniqued node");
 
   // Create a dummy node in case we have a metadata cycle.
   MDNodeFwdDecl *Dummy = MDNode::getTemporary(Node->getContext(), None);

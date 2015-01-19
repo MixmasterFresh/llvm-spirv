@@ -844,6 +844,7 @@ private:
   void resolve();
   void resolveAfterOperandChange(Metadata *Old, Metadata *New);
   void decrementUnresolvedOperandCount();
+  unsigned countUnresolvedOperands() const;
 
   void deleteAsSubclass();
   UniquableMDNode *uniquify();

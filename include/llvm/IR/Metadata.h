@@ -734,6 +734,15 @@ public:
   bool isDistinct() const { return Storage == Distinct; }
   bool isTemporary() const { return Storage == Temporary; }
 
+  /// \brief RAUW a temporary.
+  ///
+  /// \pre \a isTemporary() must be \c true.
+  void replaceAllUsesWith(Metadata *MD) {
+    assert(isTemporary() && "Expected temporary node");
+    assert(!isResolved() && "Expected RAUW support");
+    Context.getReplaceableUses()->replaceAllUsesWith(MD);
+  }
+
 protected:
   /// \brief Set an operand.
   ///
@@ -971,11 +980,6 @@ public:
 
   static bool classof(const Metadata *MD) {
     return MD->getMetadataID() == MDNodeFwdDeclKind;
-  }
-
-  void replaceAllUsesWith(Metadata *MD) {
-    assert(Context.hasReplaceableUses() && "Expected RAUW support");
-    Context.getReplaceableUses()->replaceAllUsesWith(MD);
   }
 };
 

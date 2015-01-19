@@ -957,9 +957,6 @@ public:
   static bool classof(const Metadata *MD) {
     return MD->getMetadataID() == MDTupleKind;
   }
-
-private:
-  MDTuple *uniquifyImpl();
 };
 
 MDTuple *MDNode::get(LLVMContext &Context, ArrayRef<Metadata *> MDs) {
@@ -1034,9 +1031,6 @@ public:
   static bool classof(const Metadata *MD) {
     return MD->getMetadataID() == MDLocationKind;
   }
-
-private:
-  MDLocation *uniquifyImpl();
 };
 
 //===----------------------------------------------------------------------===//

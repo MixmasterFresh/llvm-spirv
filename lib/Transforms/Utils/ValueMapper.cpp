@@ -225,7 +225,7 @@ static Metadata *mapDistinctNode(const UniquableMDNode *Node,
   assert(Node->isDistinct() && "Expected distinct node");
 
   // Create the node first so it's available for cyclical references.
-  MDNode *NewMD = MDNode::replaceWithDistinct(cloneMDNode(Node));
+  UniquableMDNode *NewMD = MDNode::replaceWithDistinct(cloneMDNode(Node));
   mapToMetadata(VM, Node, NewMD);
 
   // Fix the operands.

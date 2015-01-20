@@ -1160,7 +1160,7 @@ bool SIInstrInfo::verifyInstruction(const MachineInstr *MI,
     case AMDGPU::OPERAND_REG_IMM32:
       break;
     case AMDGPU::OPERAND_REG_INLINE_C:
-      if (isLiteralConstant(MI->getOperand(i))) {
+      if (MI->getOperand(i).isImm() && !isInlineConstant(MI->getOperand(i))) {
         ErrInfo = "Illegal immediate value for operand.";
         return false;
       }

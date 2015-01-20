@@ -70,7 +70,6 @@ private:
   bool CFALUBug;
   int LocalMemorySize;
   bool EnableVGPRSpilling;
-  bool SGPRInitBug;
 
   const DataLayout DL;
   AMDGPUFrameLowering FrameLowering;
@@ -241,14 +240,6 @@ public:
     return TargetTriple.getOS() == Triple::AMDHSA;
   }
   bool isVGPRSpillingEnabled(const SIMachineFunctionInfo *MFI) const;
-
-  unsigned getMaxWavesPerCU() const {
-    if (getGeneration() >= AMDGPUSubtarget::SOUTHERN_ISLANDS)
-      return 10;
-
-    // FIXME: Not sure what this is for other subtagets.
-    llvm_unreachable("do not know max waves per CU for this subtarget.");
-  }
 };
 
 } // End namespace llvm

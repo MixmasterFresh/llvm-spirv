@@ -722,6 +722,9 @@ public:
   static inline TempMDTuple getTemporary(LLVMContext &Context,
                                          ArrayRef<Metadata *> MDs);
 
+  /// \brief Create a (temporary) clone of this.
+  TempMDNode clone() const;
+
   /// \brief Deallocate a node created by getTemporary.
   ///
   /// The node must not have any users.
@@ -899,6 +902,11 @@ class MDTuple : public MDNode {
   static MDTuple *getImpl(LLVMContext &Context, ArrayRef<Metadata *> MDs,
                           StorageType Storage, bool ShouldCreate = true);
 
+  TempMDTuple cloneImpl() const {
+    return getTemporary(getContext(),
+                        SmallVector<Metadata *, 4>(op_begin(), op_end()));
+  }
+
 public:
   /// \brief Get the hash, if any.
   unsigned getHash() const { return SubclassData32; }
@@ -926,6 +934,9 @@ public:
                                   ArrayRef<Metadata *> MDs) {
     return TempMDTuple(getImpl(Context, MDs, Temporary));
   }
+
+  /// \brief Return a (temporary) clone of this.
+  TempMDTuple clone() const { return cloneImpl(); }
 
   static bool classof(const Metadata *MD) {
     return MD->getMetadataID() == MDTupleKind;
@@ -966,6 +977,11 @@ class MDLocation : public MDNode {
                              Metadata *InlinedAt, StorageType Storage,
                              bool ShouldCreate = true);
 
+  TempMDLocation cloneImpl() const {
+    return getTemporary(getContext(), getLine(), getColumn(), getScope(),
+                        getInlinedAt());
+  }
+
   // Disallow replacing operands.
   void replaceOperandWith(unsigned I, Metadata *New) LLVM_DELETED_FUNCTION;
 
@@ -991,6 +1007,9 @@ public:
     return TempMDLocation(
         getImpl(Context, Line, Column, Scope, InlinedAt, Temporary));
   }
+
+  /// \brief Return a (temporary) clone of this.
+  TempMDLocation clone() const { return cloneImpl(); }
 
   unsigned getLine() const { return SubclassData32; }
   unsigned getColumn() const { return SubclassData16; }
@@ -1055,6 +1074,12 @@ class GenericDwarfNode : public DwarfNode {
                                    StorageType Storage,
                                    bool ShouldCreate = true);
 
+  TempGenericDwarfNode cloneImpl() const {
+    return getTemporary(
+        getContext(), getTag(), getHeader(),
+        SmallVector<Metadata *, 4>(dwarf_op_begin(), dwarf_op_end()));
+  }
+
 public:
   unsigned getHash() const { return SubclassData32; }
 
@@ -1081,6 +1106,9 @@ public:
     return TempGenericDwarfNode(
         getImpl(Context, Tag, Header, DwarfOps, Temporary));
   }
+
+  /// \brief Return a (temporary) clone of this.
+  TempGenericDwarfNode clone() const { return cloneImpl(); }
 
   unsigned getTag() const { return SubclassData16; }
   MDString *getHeader() const { return cast_or_null<MDString>(getOperand(0)); }

@@ -2395,6 +2395,7 @@ bool SelectionDAGBuilder::handleBTSplitSwitchCase(CaseRec& CR,
   DEBUG(dbgs() << "Selecting best pivot: \n"
                << "First: " << First << ", Last: " << Last <<'\n'
                << "LSize: " << LSize << ", RSize: " << RSize << '\n');
+  const TargetLowering &TLI = DAG.getTargetLoweringInfo();
   for (CaseItr I = CR.Range.first, J=I+1, E = CR.Range.second;
        J!=E; ++I, ++J) {
     const APInt &LEnd = cast<ConstantInt>(I->High)->getValue();
@@ -2404,10 +2405,16 @@ bool SelectionDAGBuilder::handleBTSplitSwitchCase(CaseRec& CR,
            "Invalid case distance");
     // Use volatile double here to avoid excess precision issues on some hosts,
     // e.g. that use 80-bit X87 registers.
+    // Only consider the density of sub-ranges that actually have sufficient
+    // entries to be lowered as a jump table.
     volatile double LDensity =
-        LSize.roundToDouble() / (LEnd - First + 1ULL).roundToDouble();
+        LSize.ult(TLI.getMinimumJumpTableEntries())
+            ? 0.0
+            : LSize.roundToDouble() / (LEnd - First + 1ULL).roundToDouble();
     volatile double RDensity =
-        RSize.roundToDouble() / (Last - RBegin + 1ULL).roundToDouble();
+        RSize.ult(TLI.getMinimumJumpTableEntries())
+            ? 0.0
+            : RSize.roundToDouble() / (Last - RBegin + 1ULL).roundToDouble();
     volatile double Metric = Range.logBase2() * (LDensity + RDensity);
     // Should always split in some non-trivial place
     DEBUG(dbgs() <<"=>Step\n"
@@ -2425,13 +2432,8 @@ bool SelectionDAGBuilder::handleBTSplitSwitchCase(CaseRec& CR,
     RSize -= J->size();
   }
 
-  const TargetLowering &TLI = DAG.getTargetLoweringInfo();
-  if (areJTsAllowed(TLI)) {
-    // If our case is dense we *really* should handle it earlier!
-    assert((FMetric > 0) && "Should handle dense range earlier!");
-  } else {
+  if (FMetric == 0 || !areJTsAllowed(TLI))
     Pivot = CR.Range.first + Size/2;
-  }
   splitSwitchCase(CR, Pivot, WorkList, SV, SwitchBB);
   return true;
 }

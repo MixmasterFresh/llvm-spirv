@@ -118,7 +118,8 @@ bool SIPrepareScratchRegs::runOnMachineFunction(MachineFunction &MF) {
     MachineBasicBlock &MBB = *BI;
     // Add the scratch offset reg as a live-in so that the register scavenger
     // doesn't re-use it.
-    if (!MBB.isLiveIn(ScratchOffsetReg))
+    if (!MBB.isLiveIn(ScratchOffsetReg) &&
+        ScratchOffsetReg != AMDGPU::NoRegister)
       MBB.addLiveIn(ScratchOffsetReg);
     RS.enterBasicBlock(&MBB);
 
@@ -193,6 +194,7 @@ bool SIPrepareScratchRegs::runOnMachineFunction(MachineFunction &MF) {
           MI.getOperand(2).setIsUndef(false);
           MI.getOperand(3).setReg(ScratchOffsetReg);
           MI.getOperand(3).setIsUndef(false);
+          MI.getOperand(3).setIsKill(false);
           MI.addOperand(MachineOperand::CreateReg(Rsrc0, false, true, true));
           MI.addOperand(MachineOperand::CreateReg(Rsrc1, false, true, true));
           MI.addOperand(MachineOperand::CreateReg(Rsrc2, false, true, true));

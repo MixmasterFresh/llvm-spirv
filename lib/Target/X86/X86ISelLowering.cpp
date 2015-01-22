@@ -24814,6 +24814,7 @@ static SDValue PerformMLOADCombine(SDNode *N, SelectionDAG &DAG,
 
     // Can't shuffle using an illegal type.
     assert (TLI.isTypeLegal(WideVecVT) && "WideVecVT should be legal");
+    (void)TLI;
     WideSrc0 = DAG.getVectorShuffle(WideVecVT, dl, WideSrc0,
                                     DAG.getUNDEF(WideVecVT), &ShuffleVec[0]);
   }
@@ -24898,6 +24899,7 @@ static SDValue PerformMSTORECombine(SDNode *N, SelectionDAG &DAG,
 
   // Can't shuffle using an illegal type.
   assert (TLI.isTypeLegal(WideVecVT) && "WideVecVT should be legal");
+  (void)TLI;
 
   SDValue TruncatedVal = DAG.getVectorShuffle(WideVecVT, dl, WideVec,
                                         DAG.getUNDEF(WideVecVT),

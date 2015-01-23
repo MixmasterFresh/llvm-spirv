@@ -447,7 +447,7 @@ void TargetPassConfig::addPassesToHandleExceptions() {
     // FALLTHROUGH
   case ExceptionHandling::DwarfCFI:
   case ExceptionHandling::ARM:
-  case ExceptionHandling::ItaniumWinEH:
+  case ExceptionHandling::WinEH:
     addPass(createDwarfEHPass(TM));
     break;
   case ExceptionHandling::MSVC: // FIXME: Add preparation.

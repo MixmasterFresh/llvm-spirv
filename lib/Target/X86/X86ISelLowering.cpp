@@ -24785,7 +24785,6 @@ static SDValue PerformMLOADCombine(SDNode *N, SelectionDAG &DAG,
     return SDValue();
 
   EVT VT = Mld->getValueType(0);
-  const TargetLowering &TLI = DAG.getTargetLoweringInfo();
   unsigned NumElems = VT.getVectorNumElements();
   EVT LdVT = Mld->getMemoryVT();
   SDLoc dl(Mld);
@@ -24813,8 +24812,8 @@ static SDValue PerformMLOADCombine(SDNode *N, SelectionDAG &DAG,
       ShuffleVec[i] = i * SizeRatio;
 
     // Can't shuffle using an illegal type.
-    assert (TLI.isTypeLegal(WideVecVT) && "WideVecVT should be legal");
-    (void)TLI;
+    assert (DAG.getTargetLoweringInfo().isTypeLegal(WideVecVT)
+	    && "WideVecVT should be legal");
     WideSrc0 = DAG.getVectorShuffle(WideVecVT, dl, WideSrc0,
                                     DAG.getUNDEF(WideVecVT), &ShuffleVec[0]);
   }
@@ -24866,7 +24865,6 @@ static SDValue PerformMSTORECombine(SDNode *N, SelectionDAG &DAG,
     return SDValue();
 
   EVT VT = Mst->getValue().getValueType();
-  const TargetLowering &TLI = DAG.getTargetLoweringInfo();
   unsigned NumElems = VT.getVectorNumElements();
   EVT StVT = Mst->getMemoryVT();
   SDLoc dl(Mst);
@@ -24898,8 +24896,8 @@ static SDValue PerformMSTORECombine(SDNode *N, SelectionDAG &DAG,
     ShuffleVec[i] = i * SizeRatio;
 
   // Can't shuffle using an illegal type.
-  assert (TLI.isTypeLegal(WideVecVT) && "WideVecVT should be legal");
-  (void)TLI;
+  assert (DAG.getTargetLoweringInfo().isTypeLegal(WideVecVT)
+	  && "WideVecVT should be legal");
 
   SDValue TruncatedVal = DAG.getVectorShuffle(WideVecVT, dl, WideVec,
                                         DAG.getUNDEF(WideVecVT),

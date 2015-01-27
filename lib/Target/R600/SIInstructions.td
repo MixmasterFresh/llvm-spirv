@@ -1641,7 +1641,7 @@ defm V_ALIGNBYTE_B32 : VOP3Inst <vop3<0x14f, 0x1cf>, "v_alignbyte_b32",
   VOP_I32_I32_I32_I32
 >;
 
-defm V_MIN3_F32 : VOP3Inst <vop3<0x151>, "v_min3_f32",
+defm V_MIN3_F32 : VOP3Inst <vop3<0x151, 0x1d0>, "v_min3_f32",
   VOP_F32_F32_F32_F32, AMDGPUfmin3>;
 
 defm V_MIN3_I32 : VOP3Inst <vop3<0x152, 0x1d1>, "v_min3_i32",

@@ -1738,31 +1738,6 @@ class MUBUF_si <bits<7> op, dag outs, dag ins, string asm, list<dag> pattern> :
   let lds = 0;
 }
 
-class MUBUFAtomicAddr64 <bits<7> op, dag outs, dag ins, string asm, list<dag> pattern>
-    : MUBUF_si <op, outs, ins, asm, pattern> {
-
-  let offen = 0;
-  let idxen = 0;
-  let addr64 = 1;
-  let tfe = 0;
-  let soffset = 128;
-}
-
-class MUBUF_Real_vi <mubuf op, string opName, dag outs, dag ins,
-                     string asm> :
-  MUBUF <outs, ins, asm, []>,
-  MUBUFe_vi <op.VI>,
-  SIMCInstr<opName, SISubtarget.VI> {
-  let lds = 0;
-}
-
-  let offen = 0;
-  let idxen = 0;
-  let addr64 = 0;
-  let tfe = 0;
-  let vaddr = 0;
-}
-
 multiclass MUBUFAtomicOffset_m <mubuf op, string opName, dag outs, dag ins,
                                 string asm, list<dag> pattern, bit is_return> {
 

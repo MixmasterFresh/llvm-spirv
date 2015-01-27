@@ -933,9 +933,6 @@ defm BUFFER_STORE_DWORDX4 : MUBUF_Store_Helper <
   mubuf<0x1e, 0x1f>, "buffer_store_dwordx4", VReg_128, v4i32, global_store
 >;
 
-let SubtargetPredicate = isSICI in {
-
-//def BUFFER_ATOMIC_SWAP : MUBUF_ <0x00000030, "buffer_atomic_swap", []>;
 defm BUFFER_ATOMIC_SWAP : MUBUF_Atomic <
   mubuf<0x30, 0x40>, "buffer_atomic_swap", VGPR_32, i32, atomic_swap_global
 >;

@@ -165,9 +165,6 @@ performOnModule(Module &M) {
     if (C.getName() == Name)
       continue;
 
-    if (GlobalObject *GO = dyn_cast<GlobalObject>(&C))
-      rewriteComdat(M, GO, C.getName(), Name);
-
     if (Value *V = (M.*Get)(Name))
       C.setValueName(V->getValueName());
     else

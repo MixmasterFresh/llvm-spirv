@@ -1002,11 +1002,16 @@ multiclass VOP3b_2_m <vop op, dag outs, dag ins, string asm,
   // can write it into any SGPR. We currently don't use the carry out,
   // so for now hardcode it to VCC as well.
   let sdst = SIOperand.VCC, Defs = [VCC] in {
-    def _si : VOP3b_Real_si <op.SI3, outs, ins, asm, opName>,
-              VOP3DisableFields<1, 0, HasMods>;
+    def _si : VOP3b <op.SI3, outs, ins, asm, []>,
+              VOP3DisableFields<1, 0, HasMods>,
+              SIMCInstr<opName#"_e64", SISubtarget.SI>,
+              VOP2_REV<revOp#"_e64_si", !eq(revOp, opName)>;
 
-    def _vi : VOP3b_Real_vi <op.VI3, outs, ins, asm, opName>,
-              VOP3DisableFields<1, 0, HasMods>;
+    // TODO: Do we need this VI variant here?
+    /*def _vi : VOP3b_vi <op.VI3, outs, ins, asm, []>,
+              VOP3DisableFields<1, 0, HasMods>,
+              SIMCInstr<opName#"_e64", SISubtarget.VI>,
+              VOP2_REV<revOp#"_e64_vi", !eq(revOp, opName)>;*/
   } // End sdst = SIOperand.VCC, Defs = [VCC]
 }
 

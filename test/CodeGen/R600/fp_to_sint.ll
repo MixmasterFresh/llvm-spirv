@@ -4,8 +4,6 @@
 
 declare float @llvm.fabs.f32(float) #0
 
-declare float @llvm.fabs.f32(float) #0
-
 ; FUNC-LABEL: {{^}}fp_to_sint_i32:
 ; EG: FLT_TO_INT {{\** *}}T{{[0-9]+\.[XYZW], PV\.[XYZW]}}
 ; SI: v_cvt_i32_f32_e32

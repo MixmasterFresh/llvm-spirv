@@ -1,6 +1,6 @@
-; RUN: llc < %s -march=r600 -mcpu=redwood | FileCheck --check-prefix=R600 %s
-; RUN: llc < %s -march=amdgcn -mcpu=verde -verify-machineinstrs | FileCheck --check-prefix=SI %s
-; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs | FileCheck --check-prefix=SI %s
+; RUN: llc < %s -march=r600 -mcpu=redwood | FileCheck --check-prefix=R600-CHECK %s
+; RUN: llc < %s -march=amdgcn -mcpu=verde -verify-machineinstrs | FileCheck --check-prefix=SI-CHECK %s
+; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs | FileCheck --check-prefix=SI-CHECK %s
 
 ; R600: {{^}}amdgpu_trunc:
 ; R600: TRUNC T{{[0-9]+\.[XYZW]}}, KC0[2].Z

@@ -1722,8 +1722,7 @@ void X86TargetLowering::resetOperationActions() {
   setTargetDAGCombine(ISD::SETCC);
   setTargetDAGCombine(ISD::INTRINSIC_WO_CHAIN);
   setTargetDAGCombine(ISD::BUILD_VECTOR);
-  if (Subtarget->is64Bit())
-    setTargetDAGCombine(ISD::MUL);
+  setTargetDAGCombine(ISD::MUL);
   setTargetDAGCombine(ISD::XOR);
 
   computeRegisterProperties();
@@ -24024,7 +24023,7 @@ static SDValue PerformMulCombine(SDNode *N, SelectionDAG &DAG,
     return SDValue();
 
   EVT VT = N->getValueType(0);
-  if (VT != MVT::i64)
+  if (VT != MVT::i64 && VT != MVT::i32)
     return SDValue();
 
   ConstantSDNode *C = dyn_cast<ConstantSDNode>(N->getOperand(1));

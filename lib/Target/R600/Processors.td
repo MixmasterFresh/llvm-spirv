@@ -113,9 +113,7 @@ def : ProcessorModel<"mullins",    SIQuarterSpeedModel, [FeatureSeaIslands]>;
 // Volcanic Islands
 //===----------------------------------------------------------------------===//
 
-def : ProcessorModel<"tonga",   SIQuarterSpeedModel,
-  [FeatureVolcanicIslands, FeatureSGPRInitBug]
->;
+def : ProcessorModel<"tonga",   SIQuarterSpeedModel, [FeatureVolcanicIslands]>;
 
 def : ProcessorModel<"iceland", SIQuarterSpeedModel,
   [FeatureVolcanicIslands, FeatureSGPRInitBug]

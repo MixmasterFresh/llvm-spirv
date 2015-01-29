@@ -408,14 +408,20 @@ static bool usesTheStack(const MachineFunction &MF) {
   return false;
 }
 
-void X86FrameLowering::getStackProbeFunction(const MachineFunction &MF,
-                                             const X86Subtarget &STI,
-                                             unsigned &CallOp,
-                                             const char *&Symbol) {
-  if (STI.is64Bit())
-    CallOp = MF.getTarget().getCodeModel() == CodeModel::Large
-                 ? X86::CALL64r
-                 : X86::CALL64pcrel32;
+void X86FrameLowering::emitStackProbeCall(MachineFunction &MF,
+                                          MachineBasicBlock &MBB,
+                                          MachineBasicBlock::iterator MBBI,
+                                          DebugLoc DL) {
+  const TargetInstrInfo &TII = *MF.getSubtarget().getInstrInfo();
+  const X86Subtarget &STI = MF.getTarget().getSubtarget<X86Subtarget>();
+  bool Is64Bit = STI.is64Bit();
+  bool IsLargeCodeModel = MF.getTarget().getCodeModel() == CodeModel::Large;
+  const X86RegisterInfo *RegInfo =
+      static_cast<const X86RegisterInfo *>(MF.getSubtarget().getRegisterInfo());
+
+  unsigned CallOp;
+  if (Is64Bit)
+    CallOp = IsLargeCodeModel ? X86::CALL64r : X86::CALL64pcrel32;
   else
     CallOp = X86::CALLpcrel32;
 
@@ -793,11 +799,6 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF) const {
   // increments is necessary to ensure that the guard pages used by the OS
   // virtual memory manager are allocated in correct sequence.
   if (NumBytes >= StackProbeSize && UseStackProbe) {
-    const char *StackProbeSymbol;
-    unsigned CallOp;
-
-    getStackProbeFunction(MF, STI, CallOp, StackProbeSymbol);
-
     // Check whether EAX is livein for this function.
     bool isEAXAlive = isEAXLiveIn(MF);
 
@@ -826,23 +827,16 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF) const {
         .setMIFlag(MachineInstr::FrameSetup);
     }
 
-    if (Is64Bit && MF.getTarget().getCodeModel() == CodeModel::Large) {
-      // For the large code model, we have to call through a register. Use R11,
-      // as it is unused and clobbered by all probe functions.
-      BuildMI(MBB, MBBI, DL, TII.get(X86::MOV64ri), X86::R11)
-          .addExternalSymbol(StackProbeSymbol);
-      BuildMI(MBB, MBBI, DL, TII.get(CallOp))
-          .addReg(X86::R11)
-          .addReg(StackPtr, RegState::Define | RegState::Implicit)
-          .addReg(X86::EFLAGS, RegState::Define | RegState::Implicit)
-          .setMIFlag(MachineInstr::FrameSetup);
-    } else {
-      BuildMI(MBB, MBBI, DL, TII.get(CallOp))
-          .addExternalSymbol(StackProbeSymbol)
-          .addReg(StackPtr, RegState::Define | RegState::Implicit)
-          .addReg(X86::EFLAGS, RegState::Define | RegState::Implicit)
-          .setMIFlag(MachineInstr::FrameSetup);
-    }
+    // Save a pointer to the MI where we set AX.
+    MachineBasicBlock::iterator SetRAX = MBBI;
+    --SetRAX;
+
+    // Call __chkstk, __chkstk_ms, or __alloca.
+    emitStackProbeCall(MF, MBB, MBBI, DL);
+
+    // Apply the frame setup flag to all inserted instrs.
+    for (; SetRAX != MBBI; ++SetRAX)
+      SetRAX->setFlag(MachineInstr::FrameSetup);
 
     if (isEAXAlive) {
       // Restore EAX

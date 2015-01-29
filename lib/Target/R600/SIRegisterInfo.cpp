@@ -155,7 +155,6 @@ void SIRegisterInfo::buildScratchLoadStore(MachineBasicBlock::iterator MI,
   unsigned Size = NumSubRegs * 4;
 
   if (!isUInt<12>(Offset + Size)) {
-    dbgs() << "Offset scavenge\n";
     SOffset = RS->scavengeRegister(&AMDGPU::SGPR_32RegClass, MI, 0);
     if (SOffset == AMDGPU::NoRegister) {
       RanOutOfSGPRs = true;
@@ -252,8 +251,7 @@ void SIRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator MI,
            Ctx.emitError("Ran out of VGPRs for spilling SGPR");
         }
 
-        if (isM0) {
-          dbgs() << "Scavenge M0\n";
+        if (isM0)
           SubReg = RS->scavengeRegister(&AMDGPU::SGPR_32RegClass, MI, 0);
 
         BuildMI(*MBB, MI, DL,

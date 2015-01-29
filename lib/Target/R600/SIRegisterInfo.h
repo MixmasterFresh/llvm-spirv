@@ -17,7 +17,6 @@
 #define LLVM_LIB_TARGET_R600_SIREGISTERINFO_H
 
 #include "AMDGPURegisterInfo.h"
-#include "AMDGPUSubtarget.h"
 #include "llvm/Support/Debug.h"
 
 namespace llvm {
@@ -112,8 +111,7 @@ struct SIRegisterInfo : public AMDGPURegisterInfo {
 
   /// \brief Give the maximum number of SGPRs that can be used by \p WaveCount
   ///        concurrent waves.
-  unsigned getNumSGPRsAllowed(AMDGPUSubtarget::Generation gen,
-                              unsigned WaveCount) const;
+  unsigned getNumSGPRsAllowed(unsigned WaveCount) const;
 
   unsigned findUnusedRegister(const MachineRegisterInfo &MRI,
                               const TargetRegisterClass *RC) const;

@@ -75,10 +75,9 @@ cl::opt<bool> EnableAArch64ELFLocalDynamicTLSGeneration(
     cl::desc("Allow AArch64 Local Dynamic TLS code generation"),
     cl::init(false));
 
-
-AArch64TargetLowering::AArch64TargetLowering(const TargetMachine &TM)
-    : TargetLowering(TM) {
-  Subtarget = &TM.getSubtarget<AArch64Subtarget>();
+AArch64TargetLowering::AArch64TargetLowering(const TargetMachine &TM,
+                                             const AArch64Subtarget &STI)
+    : TargetLowering(TM), Subtarget(&STI) {
 
   // AArch64 doesn't have comparisons which set GPRs or setcc instructions, so
   // we have to make something up. Arbitrarily, choose ZeroOrOne.
@@ -887,7 +886,7 @@ AArch64TargetLowering::EmitF128CSEL(MachineInstr *MI,
   //     Dest = PHI [IfTrue, TrueBB], [IfFalse, OrigBB]
 
   MachineFunction *MF = MBB->getParent();
-  const TargetInstrInfo *TII = MF->getSubtarget().getInstrInfo();
+  const TargetInstrInfo *TII = Subtarget->getInstrInfo();
   const BasicBlock *LLVM_BB = MBB->getBasicBlock();
   DebugLoc DL = MI->getDebugLoc();
   MachineFunction::iterator It = MBB;
@@ -2805,8 +2804,7 @@ AArch64TargetLowering::LowerCall(CallLoweringInfo &CLI,
 
   // Add a register mask operand representing the call-preserved registers.
   const uint32_t *Mask;
-  const AArch64RegisterInfo *TRI = static_cast<const AArch64RegisterInfo *>(
-      MF.getSubtarget().getRegisterInfo());
+  const AArch64RegisterInfo *TRI = Subtarget->getRegisterInfo();
   if (IsThisReturn) {
     // For 'this' returns, use the X0-preserving mask if applicable
     Mask = TRI->getThisReturnPreservedMask(CallConv);
@@ -3036,8 +3034,7 @@ AArch64TargetLowering::LowerDarwinGlobalTLSAddress(SDValue Op,
   // trashed: X0 (it takes an argument), LR (it's a call) and NZCV (let's not be
   // silly).
   const uint32_t *Mask =
-      static_cast<const AArch64RegisterInfo *>(
-          DAG.getSubtarget().getRegisterInfo())->getTLSCallPreservedMask();
+      Subtarget->getRegisterInfo()->getTLSCallPreservedMask();
 
   // Finally, we can make the call. This is just a degenerate version of a
   // normal AArch64 call node: x0 takes the address of the descriptor, and
@@ -3080,8 +3077,7 @@ SDValue AArch64TargetLowering::LowerELFTLSDescCallSeq(SDValue SymAddr, SDLoc DL,
   // trashed: X0 (it takes an argument), LR (it's a call) and NZCV (let's not be
   // silly).
   const uint32_t *Mask =
-      static_cast<const AArch64RegisterInfo *>(
-          DAG.getSubtarget().getRegisterInfo())->getTLSCallPreservedMask();
+      Subtarget->getRegisterInfo()->getTLSCallPreservedMask();
 
   // The function takes only one argument: the address of the descriptor itself
   // in X0.

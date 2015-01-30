@@ -691,7 +691,7 @@ getModuleForFile(LLVMContext &Context, claimed_file &F,
   return Obj.takeModule();
 }
 
-static void runLTOPasses(Module &M, TargetMachine &TM) {
+static void runLTOPasses(Module &M, const TargetMachine &TM) {
   PassManager passes;
   PassManagerBuilder PMB;
   PMB.LibraryInfo = new TargetLibraryInfoImpl(Triple(TM.getTargetTriple()));
@@ -700,7 +700,7 @@ static void runLTOPasses(Module &M, TargetMachine &TM) {
   PMB.VerifyOutput = true;
   PMB.LoopVectorize = true;
   PMB.SLPVectorize = true;
-  PMB.populateLTOPassManager(passes, &TM);
+  PMB.populateLTOPassManager(passes);
   passes.run(M);
 }
 

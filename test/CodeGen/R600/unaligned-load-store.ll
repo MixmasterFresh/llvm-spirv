@@ -1,37 +1,11 @@
 ; RUN: llc -march=amdgcn -mcpu=SI -verify-machineinstrs< %s | FileCheck -check-prefix=SI %s
 ; RUN: llc -march=amdgcn -mcpu=tonga -verify-machineinstrs< %s | FileCheck -check-prefix=SI %s
 
-; SI-LABEL: {{^}}unaligned_load_store_i16_local:
-; SI: ds_read_u8
-; SI: ds_read_u8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: s_endpgm
-define void @unaligned_load_store_i16_local(i16 addrspace(3)* %p, i16 addrspace(3)* %r) nounwind {
-  %v = load i16 addrspace(3)* %p, align 1
-  store i16 %v, i16 addrspace(3)* %r, align 1
-  ret void
-}
-
-; SI-LABEL: {{^}}unaligned_load_store_i16_global:
-; SI: buffer_load_ubyte
-; SI: buffer_load_ubyte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: s_endpgm
-define void @unaligned_load_store_i16_global(i16 addrspace(1)* %p, i16 addrspace(1)* %r) nounwind {
-  %v = load i16 addrspace(1)* %p, align 1
-  store i16 %v, i16 addrspace(1)* %r, align 1
-  ret void
-}
-
 ; SI-LABEL: {{^}}unaligned_load_store_i32_local:
 ; SI: ds_read_u8
 ; SI: ds_read_u8
 ; SI: ds_read_u8
 ; SI: ds_read_u8
-; SI: ds_write_b8
-; SI: ds_write_b8
 ; SI: ds_write_b8
 ; SI: ds_write_b8
 ; SI: s_endpgm
@@ -46,10 +20,7 @@ define void @unaligned_load_store_i32_local(i32 addrspace(3)* %p, i32 addrspace(
 ; SI: buffer_load_ubyte
 ; SI: buffer_load_ubyte
 ; SI: buffer_load_ubyte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
+; SI: buffer_store_dword
 define void @unaligned_load_store_i32_global(i32 addrspace(1)* %p, i32 addrspace(1)* %r) nounwind {
   %v = load i32 addrspace(1)* %p, align 1
   store i32 %v, i32 addrspace(1)* %r, align 1
@@ -65,14 +36,7 @@ define void @unaligned_load_store_i32_global(i32 addrspace(1)* %p, i32 addrspace
 ; SI: ds_read_u8
 ; SI: ds_read_u8
 ; SI: ds_read_u8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
-; SI: ds_write_b8
+; SI: ds_write2_b32
 ; SI: s_endpgm
 define void @unaligned_load_store_i64_local(i64 addrspace(3)* %p, i64 addrspace(3)* %r) {
   %v = load i64 addrspace(3)* %p, align 1
@@ -89,14 +53,7 @@ define void @unaligned_load_store_i64_local(i64 addrspace(3)* %p, i64 addrspace(
 ; SI: buffer_load_ubyte
 ; SI: buffer_load_ubyte
 ; SI: buffer_load_ubyte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
-; SI: buffer_store_byte
+; SI: buffer_store_dwordx2
 define void @unaligned_load_store_i64_global(i64 addrspace(1)* %p, i64 addrspace(1)* %r) {
   %v = load i64 addrspace(1)* %p, align 1
   store i64 %v, i64 addrspace(1)* %r, align 1

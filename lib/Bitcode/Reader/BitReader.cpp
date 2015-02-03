@@ -41,11 +41,9 @@ LLVMBool LLVMParseBitcodeInContext(LLVMContextRef ContextRef,
 
   ErrorOr<Module *> ModuleOrErr = parseBitcodeFile(
       Buf, Ctx, [&](const DiagnosticInfo &DI) { DI.print(DP); });
-  if (ModuleOrErr.getError()) {
-    if (OutMessage) {
-      Stream.flush();
-      *OutMessage = strdup(Message.c_str());
-    }
+  if (std::error_code EC = ModuleOrErr.getError()) {
+    if (OutMessage)
+      *OutMessage = strdup(EC.message().c_str());
     *OutModule = wrap((Module*)nullptr);
     return 1;
   }

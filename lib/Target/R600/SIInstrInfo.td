@@ -968,12 +968,21 @@ multiclass VOP3_2_m <vop op, dag outs, dag ins, string asm,
   def "" : VOP3_Pseudo <outs, ins, pattern, opName>,
            VOP2_REV<revOp#"_e64", !eq(revOp, opName)>;
 
-  def _si : VOP3_Real_si <op.SI3,
-              outs, ins, asm, opName>,
+  def _si : VOP3_Real_si <op.SI3, outs, ins, asm, opName>,
             VOP3DisableFields<1, 0, HasMods>;
 
-  def _vi : VOP3_Real_vi <op.VI3,
-              outs, ins, asm, opName>,
+  def _vi : VOP3_Real_vi <op.VI3, outs, ins, asm, opName>,
+            VOP3DisableFields<1, 0, HasMods>;
+}
+
+multiclass VOP3SI_2_m <vop op, dag outs, dag ins, string asm,
+                     list<dag> pattern, string opName, string revOp,
+                     bit HasMods = 1, bit UseFullOp = 0> {
+
+  def "" : VOP3_Pseudo <outs, ins, pattern, opName>,
+           VOP2_REV<revOp#"_e64", !eq(revOp, opName)>;
+
+  def _si : VOP3_Real_si <op.SI3, outs, ins, asm, opName>,
             VOP3DisableFields<1, 0, HasMods>;
 
   // No VI instruction. This class is for SI only.

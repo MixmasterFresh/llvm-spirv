@@ -1535,19 +1535,9 @@ defm V_MAX_LEGACY_F32 : VOP2InstSI <vop2<0xe>, "v_max_legacy_f32",
 >;
 
 let isCommutable = 1 in {
-defm V_LSHR_B32 : VOP2InstSI <vop2<0x15>, "v_lshr_b32", VOP_I32_I32_I32, srl>;
-defm V_ASHR_I32 : VOP2InstSI <vop2<0x17>, "v_ashr_i32",
-  VOP_I32_I32_I32, sra
->;
-
-let hasPostISelHook = 1 in {
-defm V_LSHL_B32 : VOP2InstSI <vop2<0x19>, "v_lshl_b32", VOP_I32_I32_I32, shl>;
-}
-
-let isCommutable = 1 in {
-defm V_MAC_LEGACY_F32 : VOP2_VI3_Inst <vop23<0x6, 0x28e>, "v_mac_legacy_f32",
-  VOP_F32_F32_F32
->;
+defm V_LSHR_B32 : VOP2InstSI <vop2<0x15>, "v_lshr_b32", VOP_I32_I32_I32>;
+defm V_ASHR_I32 : VOP2InstSI <vop2<0x17>, "v_ashr_i32", VOP_I32_I32_I32>;
+defm V_LSHL_B32 : VOP2InstSI <vop2<0x19>, "v_lshl_b32", VOP_I32_I32_I32>;
 } // End isCommutable = 1
 } // End let SubtargetPredicate = SICI
 
@@ -1794,17 +1784,9 @@ defm V_TRIG_PREOP_F64 : VOP3Inst <
 // These instructions only exist on SI and CI
 let SubtargetPredicate = isSICI in {
 
-defm V_LSHL_B64 : VOP3Inst <vop3<0x161>, "v_lshl_b64",
-  VOP_I64_I64_I32, shl
->;
-
-defm V_LSHR_B64 : VOP3Inst <vop3<0x162>, "v_lshr_b64",
-  VOP_I64_I64_I32, srl
->;
-
-defm V_ASHR_I64 : VOP3Inst <vop3<0x163>, "v_ashr_i64",
-  VOP_I64_I64_I32, sra
->;
+defm V_LSHL_B64 : VOP3Inst <vop3<0x161>, "v_lshl_b64", VOP_I64_I64_I32>;
+defm V_LSHR_B64 : VOP3Inst <vop3<0x162>, "v_lshr_b64", VOP_I64_I64_I32>;
+defm V_ASHR_I64 : VOP3Inst <vop3<0x163>, "v_ashr_i64", VOP_I64_I64_I32>;
 
 defm V_MULLIT_F32 : VOP3Inst <vop3<0x150>, "v_mullit_f32",
   VOP_F32_F32_F32_F32>;

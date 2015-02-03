@@ -1,7 +1,7 @@
-; RUN: llc < %s -march=amdgcn -mcpu=SI -verify-machineinstrs -filetype=obj | llvm-readobj -s -symbols - | FileCheck --check-prefix=ELF-CHECK %s
-; RUN: llc < %s -march=amdgcn -mcpu=SI -verify-machineinstrs -o - | FileCheck --check-prefix=CONFIG-CHECK %s
-; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs -filetype=obj | llvm-readobj -s -symbols - | FileCheck --check-prefix=ELF-CHECK %s
-; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs -o - | FileCheck --check-prefix=CONFIG-CHECK %s
+; RUN: llc < %s -march=amdgcn -mcpu=SI -verify-machineinstrs -filetype=obj | llvm-readobj -s -symbols - | FileCheck --check-prefix=ELF %s
+; RUN: llc < %s -march=amdgcn -mcpu=SI -verify-machineinstrs -o - | FileCheck --check-prefix=CONFIG %s
+; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs -filetype=obj | llvm-readobj -s -symbols - | FileCheck --check-prefix=ELF %s
+; RUN: llc < %s -march=amdgcn -mcpu=tonga -verify-machineinstrs -o - | FileCheck --check-prefix=CONFIG %s
 
 ; ELF: Format: ELF32
 ; ELF: Name: .AMDGPU.config
@@ -15,8 +15,7 @@
 ; CONFIG: test:
 ; CONFIG: .section .AMDGPU.config
 ; CONFIG-NEXT: .long   45096
-; TYPICAL-NEXT: .long   0
-; TONGA-NEXT: .long   576
+; CONFIG-NEXT: .long   0
 define void @test(i32 %p) #0 {
    %i = add i32 %p, 2
    %r = bitcast i32 %i to float

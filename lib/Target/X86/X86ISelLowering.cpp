@@ -12769,8 +12769,7 @@ X86TargetLowering::LowerVECTOR_SHUFFLE(SDValue Op, SelectionDAG &DAG) const {
                                 DAG);
 
   unsigned MaskValue;
-  if (isBlendMask(M, VT, Subtarget->hasSSE41(), Subtarget->hasInt256(),
-                  &MaskValue))
+  if (isBlendMask(M, VT, Subtarget->hasSSE41(), HasInt256, &MaskValue))
     return LowerVECTOR_SHUFFLEtoBlend(SVOp, MaskValue, Subtarget, DAG);
 
   if (isSHUFPMask(M, VT))
@@ -12848,7 +12847,7 @@ X86TargetLowering::LowerVECTOR_SHUFFLE(SDValue Op, SelectionDAG &DAG) const {
       return NewOp;
   }
 
-  if (VT == MVT::v16i16 && Subtarget->hasInt256()) {
+  if (VT == MVT::v16i16 && HasInt256) {
     SDValue NewOp = LowerVECTOR_SHUFFLEv16i16(Op, DAG);
     if (NewOp.getNode())
       return NewOp;

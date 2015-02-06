@@ -3,9 +3,9 @@
 
 ;CHECK-NOT: s_wqm
 ;CHECK: s_mov_b32
+;CHECK-NEXT: v_interp_mov_f32
 ;CHECK: v_interp_p1_f32
 ;CHECK: v_interp_p2_f32
-;CHECK: v_interp_mov_f32
 
 define void @main(<16 x i8> addrspace(2)* inreg, <16 x i8> addrspace(2)* inreg, <32 x i8> addrspace(2)* inreg, i32 inreg, <2 x i32>) #0 {
 main_body:

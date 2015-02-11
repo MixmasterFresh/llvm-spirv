@@ -253,7 +253,7 @@ public:
   }
 
   bool enableSubRegLiveness() const override {
-    return true;
+    return false;
   }
 };
 

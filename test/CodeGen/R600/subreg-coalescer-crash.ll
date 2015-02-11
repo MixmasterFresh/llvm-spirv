@@ -1,5 +1,5 @@
-; RUN: llc -march=r600 -mcpu=SI -verify-machineinstrs -o - %s
-; RUN: llc -march=r600 -mcpu=tonga -verify-machineinstrs -o - %s
+; RUN: llc -march=amdgcn -mcpu=SI -verify-machineinstrs -o - %s
+; RUN: llc -march=amdgcn -mcpu=tonga -verify-machineinstrs -o - %s
 ; ModuleID = 'bugpoint-reduced-simplified.bc'
 
 ; SI: s_endpgm

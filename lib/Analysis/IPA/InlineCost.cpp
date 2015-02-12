@@ -1335,7 +1335,7 @@ InlineCost InlineCostAnalysis::getInlineCost(CallSite CS, Function *Callee,
         << "...\n");
 
   CallAnalyzer CA(Callee->getDataLayout(), TTIWP->getTTI(*Callee),
-                  ACT->getAssumptionCache(*Callee), *Callee, Threshold);
+                  ACT, *Callee, Threshold);
   bool ShouldInline = CA.analyzeCall(CS);
 
   DEBUG(CA.dump());

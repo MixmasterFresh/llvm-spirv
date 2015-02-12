@@ -84,6 +84,18 @@ static const unsigned AliasedCheckLimit = 10;
 // This limit is useful for very large basic blocks.
 static const unsigned MaxMemDepDistance = 160;
 
+/// \brief Predicate for the element types that the SLP vectorizer supports.
+///
+/// The most important thing to filter here are types which are invalid in LLVM
+/// vectors. We also filter target specific types which have absolutely no
+/// meaningful vectorization path such as x86_fp80 and ppc_f128. This just
+/// avoids spending time checking the cost model and realizing that they will
+/// be inevitably scalarized.
+static bool isValidElementType(Type *Ty) {
+  return VectorType::isValidElementType(Ty) && !Ty->isX86_FP80Ty() &&
+         !Ty->isPPC_FP128Ty();
+}
+
 /// \returns the parent basic block if all of the instructions in \p VL
 /// are in the same block or null otherwise.
 static BasicBlock *getSameBlock(ArrayRef<Value *> VL) {

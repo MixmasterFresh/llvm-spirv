@@ -80,6 +80,23 @@ exit:
   ret void
 }
 
+define void @test_load_cast_combine_nonnull(float** %ptr) {
+; We can't preserve nonnull metadata when converting a load of a pointer to
+; a load of an integer.
+; FIXME: We should really transform this into range metadata and vice versa.
+;
+; CHECK-LABEL: @test_load_cast_combine_nonnull(
+; CHECK: %[[V:.*]] = load i64* %{{.*}}
+; CHECK-NOT: !nonnull
+; CHECK: store i64 %[[V]], i64*
+entry:
+  %p = load float** %ptr, !nonnull !3
+  %gep = getelementptr float** %ptr, i32 42
+  store float* %p, float** %gep
+
+  ret void
+}
+
 !0 = !{ !1, !1, i64 0 }
 !1 = !{ !1 }
 !2 = !{ !2, !1 }

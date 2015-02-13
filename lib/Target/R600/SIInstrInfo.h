@@ -209,8 +209,8 @@ public:
   }
 
   bool isInlineConstant(const APInt &Imm) const;
-  bool isInlineConstant(const MachineOperand &MO) const;
-  bool isLiteralConstant(const MachineOperand &MO) const;
+  bool isInlineConstant(const MachineOperand &MO, unsigned OpSize) const;
+  bool isLiteralConstant(const MachineOperand &MO, unsigned OpSize) const;
 
   bool isImmOperandLegal(const MachineInstr *MI, unsigned OpNo,
                          const MachineOperand &MO) const;
@@ -225,7 +225,8 @@ public:
 
   /// \brief Returns true if this operand uses the constant bus.
   bool usesConstantBus(const MachineRegisterInfo &MRI,
-                       const MachineOperand &MO) const;
+                       const MachineOperand &MO,
+                       unsigned OpSize) const;
 
   /// \brief Return true if this instruction has any modifiers.
   ///  e.g. src[012]_mod, omod, clamp.
@@ -253,13 +254,6 @@ public:
   // instruction opcode.
   unsigned getOpSize(uint16_t Opcode, unsigned OpNo) const {
     const MCOperandInfo &OpInfo = get(Opcode).OpInfo[OpNo];
-
-    if (OpInfo.RegClass == -1) {
-      // If this is an immediate operand, this must be a 32-bit literal.
-      assert(OpInfo.OperandType == MCOI::OPERAND_IMMEDIATE);
-      return 4;
-    }
-
     return RI.getRegClass(OpInfo.RegClass)->getSize();
   }
 

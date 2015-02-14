@@ -1,5 +1,5 @@
 ; RUN: llc -march=amdgcn -mcpu=SI -verify-machineinstrs < %s | FileCheck -check-prefix=GCN -check-prefix=SI %s
-; RUN: llc -march=amdgcn -mcpu=tonga -verify-machineinstrs < %s | FileCheck -check-prefix=GCN -check-prefix=VI %s
+; XUN: llc -march=amdgcn -mcpu=tonga -verify-machineinstrs < %s | FileCheck -check-prefix=GCN -check-prefix=VI %s
 
 ; FIXME: Enable for VI.
 
@@ -17,7 +17,8 @@ declare double @llvm.AMDGPU.div.fmas.f64(double, double, double, i1) nounwind re
 ; VI-DAG: s_load_dword [[SB:s[0-9]+]], s{{\[[0-9]+:[0-9]+\]}}, 0x30
 ; GCN-DAG: v_mov_b32_e32 [[VC:v[0-9]+]], [[SC]]
 ; GCN-DAG: v_mov_b32_e32 [[VB:v[0-9]+]], [[SB]]
-; GCN: v_div_fmas_f32 [[RESULT:v[0-9]+]], [[SA]], [[VB]], [[VC]]
+; GCN-DAG: v_mov_b32_e32 [[VA:v[0-9]+]], [[SA]]
+; GCN: v_div_fmas_f32 [[RESULT:v[0-9]+]], [[VA]], [[VB]], [[VC]]
 ; GCN: buffer_store_dword [[RESULT]],
 ; GCN: s_endpgm
 define void @test_div_fmas_f32(float addrspace(1)* %out, float %a, float %b, float %c, i1 %d) nounwind {
@@ -63,13 +64,13 @@ define void @test_div_fmas_f32_imm_true_cond_to_vcc(float addrspace(1)* %out, fl
 }
 
 ; GCN-LABEL: {{^}}test_div_fmas_f32_logical_cond_to_vcc:
-; SI-DAG: v_cmp_eq_i32_e64 [[CMP0:s\[[0-9]+:[0-9]+\]]], v{{[0-9]+}}, 0
-; SI-DAG: v_cmp_ne_i32_e64 [[CMP1:s\[[0-9]+:[0-9]+\]]], s{{[0-9]+}}, 0
-; SI: s_and_b64 vcc, [[CMP0]], [[CMP1]]
 ; SI-DAG: buffer_load_dword [[A:v[0-9]+]], {{v\[[0-9]+:[0-9]+\]}}, {{s\[[0-9]+:[0-9]+\]}}, 0 addr64{{$}}
 ; SI-DAG: buffer_load_dword [[B:v[0-9]+]], {{v\[[0-9]+:[0-9]+\]}}, {{s\[[0-9]+:[0-9]+\]}}, 0 addr64 offset:4{{$}}
 ; SI-DAG: buffer_load_dword [[C:v[0-9]+]], {{v\[[0-9]+:[0-9]+\]}}, {{s\[[0-9]+:[0-9]+\]}}, 0 addr64 offset:8{{$}}
 
+; SI-DAG: v_cmp_eq_i32_e64 [[CMP0:s\[[0-9]+:[0-9]+\]]], v{{[0-9]+}}, 0
+; SI-DAG: v_cmp_ne_i32_e64 [[CMP1:s\[[0-9]+:[0-9]+\]]], s{{[0-9]+}}, 0
+; SI: s_and_b64 vcc, [[CMP0]], [[CMP1]]
 ; SI: v_div_fmas_f32 {{v[0-9]+}}, [[B]], [[A]], [[C]]
 ; SI: s_endpgm
 define void @test_div_fmas_f32_logical_cond_to_vcc(float addrspace(1)* %out, float addrspace(1)* %in, i32 %d) nounwind {

@@ -3413,8 +3413,8 @@ SDValue AArch64TargetLowering::LowerFCOPYSIGN(SDValue Op,
 }
 
 SDValue AArch64TargetLowering::LowerCTPOP(SDValue Op, SelectionDAG &DAG) const {
-  if (DAG.getMachineFunction().getFunction()->getAttributes().hasAttribute(
-          AttributeSet::FunctionIndex, Attribute::NoImplicitFloat))
+  if (DAG.getMachineFunction().getFunction()->hasFnAttribute(
+          Attribute::NoImplicitFloat))
     return SDValue();
 
   if (!Subtarget->hasNEON())
@@ -6590,8 +6590,7 @@ EVT AArch64TargetLowering::getOptimalMemOpType(uint64_t Size, unsigned DstAlign,
   bool Fast;
   const Function *F = MF.getFunction();
   if (Subtarget->hasFPARMv8() && !IsMemset && Size >= 16 &&
-      !F->getAttributes().hasAttribute(AttributeSet::FunctionIndex,
-                                       Attribute::NoImplicitFloat) &&
+      !F->hasFnAttribute(Attribute::NoImplicitFloat) &&
       (memOpAlign(SrcAlign, DstAlign, 16) ||
        (allowsMisalignedMemoryAccesses(MVT::f128, 0, 1, &Fast) && Fast)))
     return MVT::f128;
@@ -7832,8 +7831,7 @@ static SDValue performSTORECombine(SDNode *N,
 
   // Don't split at Oz.
   MachineFunction &MF = DAG.getMachineFunction();
-  bool IsMinSize = MF.getFunction()->getAttributes().hasAttribute(
-      AttributeSet::FunctionIndex, Attribute::MinSize);
+  bool IsMinSize = MF.getFunction()->hasFnAttribute(Attribute::MinSize);
   if (IsMinSize)
     return SDValue();
 

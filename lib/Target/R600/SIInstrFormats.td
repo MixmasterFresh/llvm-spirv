@@ -353,7 +353,7 @@ class VOP3e <bits<9> op> : Enc64 {
 
 class VOP3be <bits<9> op> : Enc64 {
 
-  bits<8> dst;
+  bits<8> vdst;
   bits<2> src0_modifiers;
   bits<9> src0;
   bits<2> src1_modifiers;
@@ -363,7 +363,7 @@ class VOP3be <bits<9> op> : Enc64 {
   bits<7> sdst;
   bits<2> omod;
 
-  let Inst{7-0} = dst;
+  let Inst{7-0} = vdst;
   let Inst{14-8} = sdst;
   let Inst{25-17} = op;
   let Inst{31-26} = 0x34; //encoding

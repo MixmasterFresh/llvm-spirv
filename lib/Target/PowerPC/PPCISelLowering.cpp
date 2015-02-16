@@ -2698,9 +2698,10 @@ PPCTargetLowering::LowerFormalArguments_64SVR4(
     unsigned ObjSize = ObjectVT.getStoreSize();
     unsigned ArgSize = ObjSize;
     ISD::ArgFlagsTy Flags = Ins[ArgNo].Flags;
-    std::advance(FuncArg, Ins[ArgNo].OrigArgIndex - CurArgIdx);
-    CurArgIdx = Ins[ArgNo].OrigArgIndex;
-
+    if (Ins[ArgNo].isOrigArg()) {
+      std::advance(FuncArg, Ins[ArgNo].getOrigArgIndex() - CurArgIdx);
+      CurArgIdx = Ins[ArgNo].getOrigArgIndex();
+    }
     // We re-align the argument offset for each argument, except when using the
     // fast calling convention, when we need to make sure we do that only when
     // we'll actually use a stack slot.
@@ -2723,6 +2724,8 @@ PPCTargetLowering::LowerFormalArguments_64SVR4(
     // FIXME the codegen can be much improved in some cases.
     // We do not have to keep everything in memory.
     if (Flags.isByVal()) {
+      assert(Ins[ArgNo].isOrigArg() && "Byval arguments cannot be implicit");
+
       if (CallConv == CallingConv::Fast)
         ComputeArgOffset();
 

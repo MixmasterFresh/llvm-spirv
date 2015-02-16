@@ -564,6 +564,8 @@ Metadata *BitcodeReaderMDValueList::getValueFwdRef(unsigned Idx) {
     MinFwdRef = MaxFwdRef = Idx;
   }
   ++NumFwdRefs;
+
+  // Create and return a placeholder, which will later be RAUW'd.
   Metadata *MD = MDNode::getTemporary(Context, None).release();
   MDValuePtrs[Idx].reset(MD);
   return MD;
@@ -579,7 +581,8 @@ void BitcodeReaderMDValueList::tryToResolveCycles() {
     return;
 
   // Resolve any cycles.
-  for (auto &MD : MDValuePtrs) {
+  for (unsigned I = MinFwdRef, E = MaxFwdRef + 1; I != E; ++I) {
+    auto &MD = MDValuePtrs[I];
     auto *N = dyn_cast_or_null<MDNode>(MD);
     if (!N)
       continue;

@@ -315,7 +315,7 @@ class VOP2_MADKe <bits<6> op> : Enc64 {
 }
 
 class VOP3e <bits<9> op> : Enc64 {
-  bits<8> dst;
+  bits<8> vdst;
   bits<2> src0_modifiers;
   bits<9> src0;
   bits<2> src1_modifiers;
@@ -325,7 +325,7 @@ class VOP3e <bits<9> op> : Enc64 {
   bits<1> clamp;
   bits<2> omod;
 
-  let Inst{7-0} = dst;
+  let Inst{7-0} = vdst;
   let Inst{8} = src0_modifiers{1};
   let Inst{9} = src1_modifiers{1};
   let Inst{10} = src2_modifiers{1};

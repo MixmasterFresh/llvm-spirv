@@ -410,7 +410,7 @@ bool llvm::UnrollRuntimeLoopProlog(Loop *L, unsigned Count, LoopInfo *LI,
   // Connect the prolog code to the original loop and update the
   // PHI functions.
   BasicBlock *LastLoopBB = cast<BasicBlock>(VMap[Latch]);
-  ConnectProlog(L, TripCount, Count, LastLoopBB, PEnd, PH, NewPH, VMap,
+  ConnectProlog(L, BECount, Count, LastLoopBB, PEnd, PH, NewPH, VMap,
                 /*AliasAnalysis*/ nullptr, DT, LI, LPM->getAsPass());
   NumRuntimeUnrolled++;
   return true;

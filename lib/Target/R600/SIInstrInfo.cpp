@@ -1171,13 +1171,10 @@ bool SIInstrInfo::verifyInstruction(const MachineInstr *MI,
     case AMDGPU::OPERAND_REG_IMM32:
       break;
     case AMDGPU::OPERAND_REG_INLINE_C:
-      if (MI->getOperand(i).isImm()) {
-        int RegClass = Desc.OpInfo[i].RegClass;
-        const TargetRegisterClass *RC = RI.getRegClass(RegClass);
-        if (!isInlineConstant(MI->getOperand(i), RC->getSize())) {
-          ErrInfo = "Illegal immediate value for operand.";
-          return false;
-        }
+      if (isLiteralConstant(MI->getOperand(i),
+                            RI.getRegClass(RegClass)->getSize())) {
+        ErrInfo = "Illegal immediate value for operand.";
+        return false;
       }
       break;
     case MCOI::OPERAND_IMMEDIATE:

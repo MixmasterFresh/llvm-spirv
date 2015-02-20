@@ -239,6 +239,7 @@ For API clients and LLVM developers.
    CoverageMappingFormat
    Statepoints
    MergeFunctions
+   BitSets
 
 :doc:`WritingAnLLVMPass`
    Information on how to write LLVM transformations and analyses.

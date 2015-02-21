@@ -1209,6 +1209,23 @@ multiclass VOP2_VI3_Inst <vop23 op, string opName, VOPProfile P,
   revOp, P.HasModifiers
 >;
 
+multiclass VOP2MADK <vop2 op, string opName, list<dag> pattern = []> {
+
+  def "" : VOP2_Pseudo <VOP_MADK.Outs, VOP_MADK.Ins, pattern, opName>;
+
+let isCodeGenOnly = 0 in {
+  def _si : VOP2Common <VOP_MADK.Outs, VOP_MADK.Ins,
+                        !strconcat(opName, VOP_MADK.Asm), []>,
+            SIMCInstr <opName#"_e32", SISubtarget.SI>,
+            VOP2_MADKe <op.SI>;
+
+  def _vi : VOP2Common <VOP_MADK.Outs, VOP_MADK.Ins,
+                        !strconcat(opName, VOP_MADK.Asm), []>,
+            SIMCInstr <opName#"_e32", SISubtarget.VI>,
+            VOP2_MADKe <op.VI>;
+} // End isCodeGenOnly = 0
+}
+
 class VOPC_Pseudo <dag outs, dag ins, list<dag> pattern, string opName> :
   VOPCCommon <ins, "", pattern>,
   VOP <opName>,

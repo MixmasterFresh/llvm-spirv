@@ -62,6 +62,9 @@ Non-comprehensive list of changes in 3.6.0
    functionality, or simply have a lot to talk about), see the `NOTE` below
    for adding a new subsection.
 
+* The minimum required Visual Studio version for building LLVM is now 2013
+  Update 4.
+
 * ... next change ...
 
 .. NOTE

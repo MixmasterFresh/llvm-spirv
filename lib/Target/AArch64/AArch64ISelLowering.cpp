@@ -4242,7 +4242,8 @@ AArch64TargetLowering::getSingleConstraintMatchWeight(
 
 std::pair<unsigned, const TargetRegisterClass *>
 AArch64TargetLowering::getRegForInlineAsmConstraint(
-    const std::string &Constraint, MVT VT) const {
+    const TargetRegisterInfo *TRI, const std::string &Constraint,
+    MVT VT) const {
   if (Constraint.size() == 1) {
     switch (Constraint[0]) {
     case 'r':
@@ -4271,7 +4272,7 @@ AArch64TargetLowering::getRegForInlineAsmConstraint(
   // Use the default implementation in TargetLowering to convert the register
   // constraint into a member of a register class.
   std::pair<unsigned, const TargetRegisterClass *> Res;
-  Res = TargetLowering::getRegForInlineAsmConstraint(Constraint, VT);
+  Res = TargetLowering::getRegForInlineAsmConstraint(TRI, Constraint, VT);
 
   // Not found as a standard register?
   if (!Res.second) {

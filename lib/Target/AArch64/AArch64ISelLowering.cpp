@@ -119,7 +119,7 @@ AArch64TargetLowering::AArch64TargetLowering(const TargetMachine &TM,
   }
 
   // Compute derived properties from the register classes
-  computeRegisterProperties();
+  computeRegisterProperties(Subtarget->getRegisterInfo());
 
   // Provide all sorts of operation actions
   setOperationAction(ISD::GlobalAddress, MVT::i64, Custom);

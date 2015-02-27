@@ -1879,7 +1879,10 @@ void SIInstrInfo::legalizeOperands(MachineInstr *MI) const {
                                               // This will be replaced later
                                               // with the new value of vaddr.
                   .addOperand(*SOffset)
-                  .addOperand(*Offset);
+                  .addOperand(*Offset)
+                  .addImm(0) // glc
+                  .addImm(0) // slc
+                  .addImm(0); // tfe
 
       MI->removeFromParent();
       MI = Addr64;
@@ -2059,6 +2062,9 @@ void SIInstrInfo::moveSMRDToVALU(MachineInstr *MI, MachineRegisterInfo &MRI) con
       MI->getOperand(1).setReg(SRsrc);
       MI->addOperand(*MBB->getParent(), MachineOperand::CreateImm(0));
       MI->addOperand(*MBB->getParent(), MachineOperand::CreateImm(ImmOffset));
+      MI->addOperand(*MBB->getParent(), MachineOperand::CreateImm(0)); // glc
+      MI->addOperand(*MBB->getParent(), MachineOperand::CreateImm(0)); // slc
+      MI->addOperand(*MBB->getParent(), MachineOperand::CreateImm(0)); // tfe
 
       const TargetRegisterClass *NewDstRC =
           RI.getRegClass(get(NewOpcode).OpInfo[0].RegClass);

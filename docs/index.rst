@@ -78,6 +78,7 @@ representation.
    Passes
    YamlIO
    GetElementPtr
+   Frontend/PerformanceTips
    MCJITDesignAndImplementation
 
 :doc:`GettingStarted`
@@ -144,6 +145,11 @@ representation.
 :doc:`GetElementPtr`
   Answers to some very frequent questions about LLVM's most frequently
   misunderstood instruction.
+
+:doc:`Frontend/PerformanceTips`
+   A collection of tips for frontend authors on how to generate IR 
+   which LLVM is able to effectively optimize.
+
 
 Programming Documentation
 =========================

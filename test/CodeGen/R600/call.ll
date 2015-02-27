@@ -7,8 +7,13 @@
 
 declare i32 @external_function(i32) nounwind
 
-define void @test_call_external(i32 addrspace(1)* %out, i32 addrspace(1)* %in) {
-  %b_ptr = getelementptr i32 addrspace(1)* %in, i32 1
+define i32 @defined_function(i32 %x) nounwind noinline {
+  %y = add i32 %x, 8
+  ret i32 %y
+}
+
+define void @test_call(i32 addrspace(1)* %out, i32 addrspace(1)* %in) {
+  %b_ptr = getelementptr i32, i32 addrspace(1)* %in, i32 1
   %a = load i32 addrspace(1)* %in
   %b = load i32 addrspace(1)* %b_ptr
   %c = call i32 @external_function(i32 %b) nounwind
@@ -17,13 +22,8 @@ define void @test_call_external(i32 addrspace(1)* %out, i32 addrspace(1)* %in) {
   ret void
 }
 
-define i32 @defined_function(i32 %x) nounwind noinline {
-  %y = add i32 %x, 8
-  ret i32 %y
-}
-
-define void @test_call(i32 addrspace(1)* %out, i32 addrspace(1)* %in) {
-  %b_ptr = getelementptr i32 addrspace(1)* %in, i32 1
+define void @test_call_external(i32 addrspace(1)* %out, i32 addrspace(1)* %in) {
+  %b_ptr = getelementptr i32, i32 addrspace(1)* %in, i32 1
   %a = load i32 addrspace(1)* %in
   %b = load i32 addrspace(1)* %b_ptr
   %c = call i32 @defined_function(i32 %b) nounwind

@@ -8,10 +8,10 @@ target triple = "x86_64-pc-linux-gnu"
 
 define i32 @_Z3foov() {
 entry:
-; CHECK: {{vmovdqa|vmovaps}} in(%rip), %ymm0
+; CHECK: vmovdqa in(%rip), %ymm0
 ; CHECK-NEXT: vmovq %xmm0, %xmm0
-; CHECK-NEXT: {{vmovdqa|vmovaps}} %xmm0, out(%rip)
-  %0 = load <4 x i64>* @in, align 32
+; CHECK-NEXT: vmovdqa %xmm0, out(%rip)
+  %0 = load <4 x i64>, <4 x i64>* @in, align 32
   %vecext = extractelement <4 x i64> %0, i32 0
   %vecinit = insertelement <2 x i64> undef, i64 %vecext, i32 0
   %vecinit1 = insertelement <2 x i64> %vecinit, i64 0, i32 1

@@ -3054,21 +3054,8 @@ SDValue AArch64TargetLowering::LowerELFTLSDescCallSeq(SDValue SymAddr, SDLoc DL,
                                                       SelectionDAG &DAG) const {
   EVT PtrVT = getPointerTy();
 
-  // The function we need to call is simply the first entry in the GOT for this
-  // descriptor, load it in preparation.
-  SDValue Func = DAG.getNode(AArch64ISD::LOADgot, DL, PtrVT, SymAddr);
-
-  // TLS calls preserve all registers except those that absolutely must be
-  // trashed: X0 (it takes an argument), LR (it's a call) and NZCV (let's not be
-  // silly).
-  const uint32_t *Mask =
-      Subtarget->getRegisterInfo()->getTLSCallPreservedMask();
-
-  // The function takes only one argument: the address of the descriptor itself
-  // in X0.
-  SDValue Glue, Chain;
-  Chain = DAG.getCopyToReg(DAG.getEntryNode(), DL, AArch64::X0, DescAddr, Glue);
-  Glue = Chain.getValue(1);
+  SDValue Chain = DAG.getEntryNode();
+  SDVTList NodeTys = DAG.getVTList(MVT::Other, MVT::Glue);
 
   SmallVector<SDValue, 2> Ops;
   Ops.push_back(Chain);

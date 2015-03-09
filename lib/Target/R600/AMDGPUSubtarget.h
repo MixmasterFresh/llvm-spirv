@@ -70,6 +70,7 @@ private:
   bool CFALUBug;
   int LocalMemorySize;
   bool EnableVGPRSpilling;
+  bool SGPRInitBug;
 
   AMDGPUFrameLowering FrameLowering;
   std::unique_ptr<AMDGPUTargetLowering> TLInfo;

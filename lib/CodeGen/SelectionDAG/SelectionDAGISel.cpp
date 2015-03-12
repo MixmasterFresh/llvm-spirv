@@ -1779,9 +1779,7 @@ SelectInlineAsmMemoryOperands(std::vector<SDValue> &Ops) {
              "Memory operand with multiple values?");
       // Otherwise, this is a memory operand.  Ask the target to select it.
       std::vector<SDValue> SelOps;
-      if (SelectInlineAsmMemoryOperand(InOps[i+1],
-                                       InlineAsm::getMemoryConstraintID(Flags),
-                                       SelOps))
+      if (SelectInlineAsmMemoryOperand(InOps[i+1], 'm', SelOps))
         report_fatal_error("Could not match memory address.  Inline asm"
                            " failure!");
 

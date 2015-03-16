@@ -57,6 +57,7 @@ GCOVOptions GCOVOptions::getDefault() {
   Options.UseCfgChecksum = false;
   Options.NoRedZone = false;
   Options.FunctionNamesInData = true;
+  Options.ExitBlockBeforeBody = DefaultExitBlockBeforeBody;
 
   if (DefaultGCOVVersion.size() != 4) {
     llvm::report_fatal_error(std::string("Invalid -default-gcov-version: ") +
@@ -513,7 +514,7 @@ void GCOVProfiler::emitProfileNotes() {
 
       Funcs.push_back(make_unique<GCOVFunction>(SP, &out, FunctionIdent++,
                                                 Options.UseCfgChecksum,
-                                                DefaultExitBlockBeforeBody));
+                                                Options.ExitBlockBeforeBody));
       GCOVFunction &Func = *Funcs.back();
 
       for (Function::iterator BB = F->begin(), E = F->end(); BB != E; ++BB) {

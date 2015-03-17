@@ -302,7 +302,7 @@ bool GCOVFunction::readGCDA(GCOVBuffer &Buff, GCOV::GCOVVersion Version) {
   // required to combine the edge counts that are contained in the GCDA file.
   for (uint32_t BlockNo = 0; Count > 0; ++BlockNo) {
     // The last block is always reserved for exit block
-    if (BlockNo >= Blocks.size() - 1) {
+    if (BlockNo >= Blocks.size()) {
       errs() << "Unexpected number of edges (in " << Name << ").\n";
       return false;
     }

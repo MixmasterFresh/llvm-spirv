@@ -29,8 +29,6 @@ class SmallVectorImpl;
 
 /// Emits exception handling directives.
 class EHStreamer : public AsmPrinterHandler {
-  MCSymbol *CurExceptionSym;
-
 protected:
   /// Target of directive emission.
   AsmPrinter *Asm;
@@ -117,9 +115,6 @@ protected:
 public:
   EHStreamer(AsmPrinter *A);
   virtual ~EHStreamer();
-
-  MCSymbol *getCurExceptionSym();
-  void beginFunction(const MachineFunction *MF) override;
 
   // Unused.
   void setSymbolSize(const MCSymbol *Sym, uint64_t Size) override {}

@@ -270,7 +270,7 @@ void SIRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator MI,
       }
 
       // TODO: only do this when it is needed
-      switch (ST.getGeneration()) {
+      switch (MF->getSubtarget<AMDGPUSubtarget>().getGeneration()) {
       case AMDGPUSubtarget::SOUTHERN_ISLANDS:
         // "VALU writes SGPR" -> "SMRD reads that SGPR" needs "S_NOP 3" on SI
         TII->insertNOPs(MI, 3);

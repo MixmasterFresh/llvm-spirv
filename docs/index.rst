@@ -172,6 +172,7 @@ For developers of applications which use LLVM as a library.
    HowToSetUpLLVMStyleRTTI
    ProgrammersManual
    Extensions
+   LibFuzzer
 
 :doc:`LLVM Language Reference Manual <LangRef>`
   Defines the LLVM intermediate representation and the assembly form of the
@@ -212,6 +213,9 @@ For developers of applications which use LLVM as a library.
 
 :doc:`CompilerWriterInfo`
   A list of helpful links for compiler writers.
+
+:doc:`LibFuzzer`
+  A library for writing in-process guided fuzzers.
 
 Subsystem Documentation
 =======================

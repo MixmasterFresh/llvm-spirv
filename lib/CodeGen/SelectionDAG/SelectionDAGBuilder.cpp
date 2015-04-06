@@ -4616,9 +4616,7 @@ SelectionDAGBuilder::visitIntrinsicCall(const CallInst &I, unsigned Intrinsic) {
     MDLocalVariable *Variable = DI.getVariable();
     MDExpression *Expression = DI.getExpression();
     const Value *Address = DI.getAddress();
-    DIVariable DIVar(Variable);
-    assert((!DIVar || DIVar.isVariable()) &&
-      "Variable in DbgDeclareInst should be either null or a DIVariable.");
+    DIVariable DIVar = Variable;
     if (!Address || !DIVar) {
       DEBUG(dbgs() << "Dropping debug info for " << DI << "\n");
       return nullptr;
@@ -4696,9 +4694,7 @@ SelectionDAGBuilder::visitIntrinsicCall(const CallInst &I, unsigned Intrinsic) {
   }
   case Intrinsic::dbg_value: {
     const DbgValueInst &DI = cast<DbgValueInst>(I);
-    DIVariable DIVar(DI.getVariable());
-    assert((!DIVar || DIVar.isVariable()) &&
-      "Variable in DbgValueInst should be either null or a DIVariable.");
+    DIVariable DIVar = DI.getVariable();
     if (!DIVar)
       return nullptr;
 

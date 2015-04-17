@@ -461,6 +461,25 @@ void MachineModuleInfo::addCleanup(MachineBasicBlock *LandingPad) {
   LP.TypeIds.push_back(0);
 }
 
+void MachineModuleInfo::addSEHCatchHandler(MachineBasicBlock *LandingPad,
+                                           const Function *Filter,
+                                           const BlockAddress *RecoverBA) {
+  LandingPadInfo &LP = getOrCreateLandingPadInfo(LandingPad);
+  SEHHandler Handler;
+  Handler.FilterOrFinally = Filter;
+  Handler.RecoverBA = RecoverBA;
+  LP.SEHHandlers.push_back(Handler);
+}
+
+void MachineModuleInfo::addSEHCleanupHandler(MachineBasicBlock *LandingPad,
+                                             const Function *Cleanup) {
+  LandingPadInfo &LP = getOrCreateLandingPadInfo(LandingPad);
+  SEHHandler Handler;
+  Handler.FilterOrFinally = Cleanup;
+  Handler.RecoverBA = nullptr;
+  LP.SEHHandlers.push_back(Handler);
+}
+
 /// TidyLandingPads - Remap landing pad labels and remove any deleted landing
 /// pads.
 void MachineModuleInfo::TidyLandingPads(DenseMap<MCSymbol*, uintptr_t> *LPMap) {

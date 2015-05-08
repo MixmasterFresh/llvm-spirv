@@ -55,7 +55,6 @@ set(LLVM_TEST_DEPENDS
           not
           yaml-bench
           yaml2obj
-          yaml-bench
           obj2yaml
           verify-uselistorder
         )

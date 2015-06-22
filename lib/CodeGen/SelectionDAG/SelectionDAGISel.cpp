@@ -2560,6 +2560,7 @@ SelectCodeCommon(SDNode *NodeToMatch, const unsigned char *MatcherTable,
   case ISD::TargetConstantPool:
   case ISD::TargetFrameIndex:
   case ISD::TargetExternalSymbol:
+  case ISD::MCSymbol:
   case ISD::TargetBlockAddress:
   case ISD::TargetJumpTable:
   case ISD::TargetGlobalTLSAddress:

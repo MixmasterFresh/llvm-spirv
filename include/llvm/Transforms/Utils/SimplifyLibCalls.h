@@ -167,6 +167,6 @@ private:
   /// function by checking for an existing function with name FuncName + f
   bool hasFloatVersion(StringRef FuncName);
 };
-} // namespace llvm
+} // End llvm namespace
 
 #endif

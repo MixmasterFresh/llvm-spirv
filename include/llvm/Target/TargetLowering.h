@@ -2822,10 +2822,9 @@ public:
     return false;
   }
 
-  /// Returns true if arguments should be sign-extended in lib calls.
-  virtual bool shouldSignExtendTypeInLibCall(EVT Type, bool IsSigned) const {
-    return IsSigned;
-  }
+  /// Lower TLS global address SDNode for target independent emulated TLS model.
+  virtual SDValue LowerToTLSEmulatedModel(const GlobalAddressSDNode *GA,
+                                          SelectionDAG &DAG) const;
 };
 
 /// Given an LLVM IR type and return type attributes, compute the return value

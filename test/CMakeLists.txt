@@ -46,7 +46,7 @@ set(LLVM_TEST_DEPENDS
           llvm-readobj
           llvm-rtdyld
           llvm-size
-          llvm-spirv
+          llvm-split
           llvm-symbolizer
           llvm-tblgen
           macho-dump

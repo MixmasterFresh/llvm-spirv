@@ -29,6 +29,9 @@ them.
 
 Non-comprehensive list of changes in this release
 =================================================
+* With this release, the minimum Windows version required for running LLVM is
+  Windows 7. Earlier versions, including Windows Vista and XP are no longer
+  supported.
 
 Changes to the MIPS Target
 --------------------------

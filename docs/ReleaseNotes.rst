@@ -33,30 +33,9 @@ Non-comprehensive list of changes in this release
   Windows 7. Earlier versions, including Windows Vista and XP are no longer
   supported.
 
-Changes to the MIPS Target
---------------------------
-
-* Added support for 128-bit integers on 64-bit targets.
-
-* Fixed some remaining N32/N64 calling convention bugs when using small
-  structures on big-endian targets.
-
-* Fixed missing sign-extensions that are required by the N32/N64 calling
-  convention when generating calls to library functions with 32-bit parameters.
-
-* ``-mno-odd-spreg`` is now honoured for vector insertion/extraction operations
-  when using ``-mmsa``.
-
-* Corrected the representation of member function pointers. This makes them
-  usable on microMIPS targets.
-
-* Fixed multiple segfaults and assertions in the disassembler when
-  disassembling instructions that have memory operands.
-
-* Fixed multiple cases of suboptimal code generation involving ``$zero``.
-
-Non-comprehensive list of changes in 3.6.0
-==========================================
+* With this release, the autoconf build system is deprecated. It will be removed
+  in the 3.9 release. Please migrate to using CMake. For more information see:
+  `Building LLVM with CMake <CMake.html>`_
 
 .. NOTE
    For small 1-3 sentence descriptions, just add an entry at the end of

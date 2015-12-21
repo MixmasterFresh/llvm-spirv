@@ -172,6 +172,13 @@ Changes to the PowerPC Target
  During this release ...
 
 
+Changes to the X86 Target
+-----------------------------
+
+ During this release ...
+
+* TLS is enabled for Cygwin as emutls.
+
 
 Changes to the OCaml bindings
 -----------------------------

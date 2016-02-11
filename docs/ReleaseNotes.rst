@@ -277,52 +277,6 @@ An exciting aspect of LLVM is that it is used as an enabling technology for
 a lot of other language and tools projects. This section lists some of the
 projects that have already been updated to work with LLVM 3.8.
 
-
-Portable Computing Language (pocl)
-----------------------------------
-
-In addition to producing an easily portable open source OpenCL
-implementation, another major goal of `pocl <http://portablecl.org/>`_
-is improving performance portability of OpenCL programs with
-compiler optimizations, reducing the need for target-dependent manual
-optimizations. An important part of pocl is a set of LLVM passes used to
-statically parallelize multiple work-items with the kernel compiler, even in
-the presence of work-group barriers. This enables static parallelization of
-the fine-grained static concurrency in the work groups in multiple ways. 
-
-
-TTA-based Co-design Environment (TCE)
--------------------------------------
-
-`TCE <http://tce.cs.tut.fi/>`_ is a toolset for designing customized
-exposed datapath processors based on the Transport triggered 
-architecture (TTA). 
-
-The toolset provides a complete co-design flow from C/C++
-programs down to synthesizable VHDL/Verilog and parallel program binaries.
-Processor customization points include the register files, function units,
-supported operations, and the interconnection network.
-
-TCE uses Clang and LLVM for C/C++/OpenCL C language support, target independent 
-optimizations and also for parts of code generation. It generates
-new LLVM-based code generators "on the fly" for the designed processors and
-loads them in to the compiler backend as runtime libraries to avoid
-per-target recompilation of larger parts of the compiler chain. 
-
-
-Likely
-------
-
-`Likely <http://www.liblikely.org>`_ is an embeddable just-in-time Lisp for
-image recognition and heterogeneous computing. Algorithms are just-in-time
-compiled using LLVM's MCJIT infrastructure to execute on single or
-multi-threaded CPUs and potentially OpenCL SPIR or CUDA enabled GPUs.
-Likely seeks to explore new optimizations for statistical learning 
-algorithms by moving them from an offline model generation step to the 
-compile-time evaluation of a function (the learning algorithm) with constant
-arguments (the training data).
-
-
 LDC - the LLVM-based D compiler
 -------------------------------
 
@@ -334,27 +288,8 @@ to concurrency and offers many classical paradigms.
 
 `LDC <http://wiki.dlang.org/LDC>`_ uses the frontend from the reference compiler
 combined with LLVM as backend to produce efficient native code. LDC targets
-x86/x86_64 systems like Linux, OS X, FreeBSD and Windows and also Linux on
-PowerPC (32/64 bit). Ports to other architectures like ARM, AArch64 and MIPS64
-are underway.
-
-
-LLVMSharp & ClangSharp
-----------------------
-
-`LLVMSharp <http://www.llvmsharp.org>`_ and
-`ClangSharp <http://www.clangsharp.org>`_ are type-safe C# bindings for
-Microsoft.NET and Mono that Platform Invoke into the native libraries.
-ClangSharp is self-hosted and is used to generated LLVMSharp using the
-LLVM-C API.
-
-`LLVMSharp Kaleidoscope Tutorials <http://www.llvmsharp.org/Kaleidoscope/>`_
-are instructive examples of writing a compiler in C#, with certain improvements
-like using the visitor pattern to generate LLVM IR.
-
-`ClangSharp PInvoke Generator <http://www.clangsharp.org/PInvoke/>`_ is the
-self-hosting mechanism for LLVM/ClangSharp and is demonstrative of using
-LibClang to generate Platform Invoke (PInvoke) signatures for C APIs.
+x86/x86_64 systems like Linux, OS X and Windows and also PowerPC (32/64 bit)
+and ARM. Ports to other architectures like AArch64 and MIPS64 are underway.
 
 
 Additional Information

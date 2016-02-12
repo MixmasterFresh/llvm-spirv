@@ -109,80 +109,32 @@ Non-comprehensive list of changes in this release
    Makes programs 10x faster by doing Special New Thing.
 
 
-Changes to the ARM Backend
---------------------------
+Changes to the ARM Backends
+---------------------------
 
-This was done to simplify compatibility with python 3.
+During this release the AArch64 target has:
 
+* Added support for more sanitizers (MSAN, TSAN) and made them compatible with
+  all VMA kernel configurations (kurrently tested on 39 and 42 bits).
+* Gained initial LLD support in the new ELF back-end
+* Extended the Load/Store optimiser and cleaned up some of the bad decisions
+  made earlier.
+* Expanded LLDB support, including watchpoints, native building, Renderscript,
+  LLDB-server, debugging 32-bit applications.
+* Added support for the ``Exynos M1`` chip.
 
-The leak detector has been removed
-----------------------------------
+During this release the ARM target has:
 
-In practice, tools like asan and valgrind were finding way more bugs than
-the old leak detector, so it was removed.
-
-
-New comdat syntax
------------------
-
-The syntax of comdats was changed to
-
-.. code-block:: llvm
-
-    $c = comdat any
-    @g = global i32 0, comdat($c)
-    @c = global i32 0, comdat
-
-The version without the parentheses is a syntactic sugar for a comdat with
-the same name as the global.
-
-
-Added support for Win64 unwind information
-------------------------------------------
-
-LLVM now obeys the `Win64 prologue and epilogue conventions
-<https://msdn.microsoft.com/en-us/library/tawsa7cb.aspx>`_ documented by
-Microsoft. Unwind information is also emitted into the .xdata section.
-
-As a result of the ABI-required prologue changes, it is now no longer possible
-to unwind the stack using a standard frame pointer walk on Win64. Instead,
-users should call ``CaptureStackBackTrace``, or implement equivalent
-functionality by consulting the unwind tables present in the binary.
-
-
-Diagnostic infrastructure used by lib/Linker and lib/Bitcode
-------------------------------------------------------------
-
-These libraries now use the diagnostic handler to print errors and warnings.
-This provides better error messages and simpler error handling.
-
-
-The PreserveSource linker mode was removed
-------------------------------------------
-
-It was fairly broken and was removed.
-
-The mode is currently still available in the C API for source
-compatibility, but it doesn't have any effect.
-
-
-Garbage Collection
-------------------
-A new experimental mechanism for describing a garbage collection safepoint was
-added to LLVM.  The new mechanism was not complete at the point this release
-was branched so it is recommended that anyone interested in using this
-mechanism track the ongoing development work on tip of tree.  The hope is that
-these intrinsics will be ready for general use by 3.7.  Documentation can be
-found `here <http://llvm.org/docs/Statepoints.html>`_.
-
-The existing gc.root implementation is still supported and as fully featured
-as it ever was.  However, two features from GCStrategy will likely be removed
-in the 3.7 release (performCustomLowering and findCustomSafePoints).  If you
-have a use case for either, please mention it on llvm-dev so that it can be
-considered for future development.
-
-We are expecting to migrate away from gc.root in the 3.8 time frame,
-but both mechanisms will be supported in 3.7.
+* Gained massive performance improvements on embedded benchmarks due to finally
+  running the stride vectorizer in full form, incrementing the performance gains
+  that we already had in the previous releases with limited stride vectorization.
+* Expanded LLDB support, including watchpoints, unwind tables
+* Extended the Load/Store optimiser and cleaned up some of the bad decisions
+  made earlier.
+* Gained some code size improvements, though there's still a long road ahead,
+  especially for older cores.
+* Added some EABI floating point comparison functions to Compiler-RT
+* Added support for Windows+GNU triple, +features in -mcpu/-march options.
 
 
 Changes to the MIPS Target

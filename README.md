@@ -1,3 +1,5 @@
+#This is an updated version of the LLVM/SPIR-V Bi-Directional Translator repo
+
 LLVM/SPIR-V Bi-Directional Translator
 -------------------------------------
 [![Build Status](https://travis-ci.org/KhronosGroup/SPIRV-LLVM.svg?branch=khronos%2Fspirv-3.6.1)](https://travis-ci.org/KhronosGroup/SPIRV-LLVM)
